@@ -28,8 +28,10 @@ byte* sendBufferUsrMotors; // buffer to send data
 
 #define TIME_UNIT        2000
 #define LONG_TIME_UNIT   5000
-//#define LEFT_MOTOR   0x01
-//#define RIGHT_MOTOR  0x02
+#define LEFT_MOTOR_1   0x01
+#define LEFT_MOTOR_2   0x03
+#define RIGHT_MOTOR_1  0x02
+#define RIGHT_MOTOR_2  0x04
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 void UserMotorsProcessIO(void);
@@ -276,18 +278,21 @@ void UserMotorsReceived(byte* recBuffPtr, byte len){
             vel2 = highVel2;
             vel2 = vel2<<8|lowVel2;
             if(direction1==0x01){
-                endlessTurn(wheels.left.id, vel1, 0);
-                res = writeInfo(wheels.left.id, LED, 0);
+                endlessTurn(LEFT_MOTOR_1, vel1, 0);
+                endlessTurn(LEFT_MOTOR_2, vel1, 0);
             }
             else{
-                endlessTurn(wheels.left.id, -vel1, 0);
-                res = writeInfo(wheels.right.id, LED, 0);
+                endlessTurn(RIGHT_MOTOR_1, -vel1, 0);
+                endlessTurn(RIGHT_MOTOR_2, -vel1, 0);
             }
-            if(direction2==0x01)
-                endlessTurn(wheels.right.id, vel2, 1);
-            else
-                endlessTurn(wheels.right.id, -vel2, 1);
-            //TODO return error code
+            if(direction2==0x01){
+                endlessTurn(RIGHT_MOTOR_1, vel2, 1);
+                endlessTurn(RIGHT_MOTOR_2, vel2, 1);
+            }
+            else{
+                endlessTurn(RIGHT_MOTOR_1, -vel2, 1);
+                endlessTurn(RIGHT_MOTOR_2, -vel2, 1);
+            }
             userMotorsCounter = 0x01;
         break;
 
