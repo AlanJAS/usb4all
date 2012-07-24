@@ -279,11 +279,11 @@ void UserMotorsReceived(byte* recBuffPtr, byte len){
             vel2 = vel2<<8|lowVel2;
             if(direction1==0x01){
                 endlessTurn(LEFT_MOTOR_1, vel1, 0);
-                endlessTurn(LEFT_MOTOR_2, vel1, 0);
+                endlessTurn(LEFT_MOTOR_2, vel1, 0);;
             }
             else{
-                endlessTurn(RIGHT_MOTOR_1, -vel1, 0);
-                endlessTurn(RIGHT_MOTOR_2, -vel1, 0);
+                endlessTurn(LEFT_MOTOR_1, -vel1, 0);
+                endlessTurn(LEFT_MOTOR_2, -vel1, 0);
             }
             if(direction2==0x01){
                 endlessTurn(RIGHT_MOTOR_1, vel2, 1);
