@@ -27,6 +27,8 @@ typedef union AX12_DATA_PACKET{
         { 
             READ_VERSION    = 0x00,
             WRITE_INFO      = 0x01,
+            READ_INFO       = 0x02,
+            GET_POS         = 0x03,
             RESETM          = 0xFF
         } CMD;
         byte len;

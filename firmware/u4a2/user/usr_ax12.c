@@ -71,9 +71,6 @@ void UserAX12Init(byte i) {
     /* andres res = addPollingFunction(&UserAX12ProcessIO);*/
     // initialize the send buffer, used to send data to the PC
     sendBufferUsrAX12 = getSharedBuffer(usrAX12Handler);
-    init_serial(); /*serial configuration for ax12*/
-    resWriteInfo = writeInfo(BRODCAST, LED, 1);
-   
 }
 
 /******************************************************************************
@@ -160,11 +157,16 @@ void UserAX12Release(byte i) {
  *****************************************************************************/
 
 void UserAX12Received(byte* recBuffPtr, byte len){
+      //WORD data_received;
+      int data_received;
+      byte data [2];
+      byte err = 0;
       byte index;
       byte j;  
       byte userAX12Counter = 0;
       byte id, regstart, resWriteInfo, valueH, valueL, sentidoIzq, velIzq, sentidoDer, velDer;
       int value;
+
       switch(((AX12_DATA_PACKET*)recBuffPtr)->CMD){
         case READ_VERSION:
               ((AX12_DATA_PACKET*)sendBufferUsrAX12)->_byte[0] = ((AX12_DATA_PACKET*)recBuffPtr)->_byte[0]; 
@@ -186,7 +188,35 @@ void UserAX12Received(byte* recBuffPtr, byte len){
               //resWriteInfo = writeInfo(0xFE, 0x19, 0x01);
               ((AX12_DATA_PACKET*)sendBufferUsrAX12)->_byte[1] = resWriteInfo; 
               userAX12Counter = 0x02;
-              break;    
+              break;
+        case GET_POS:
+              ((AX12_DATA_PACKET*)sendBufferUsrAX12)->_byte[0] = ((AX12_DATA_PACKET*)recBuffPtr)->_byte[0];
+              id       = (byte)(((AX12_DATA_PACKET*)recBuffPtr)->_byte[1]);
+              data[0] = PRESENT_POSITION_L;
+              data[1] = 0x02; /*length of dTA , data);*/
+              ax12SendPacket (id, 0x02, READ_DATA , data);
+              value = ax12ReadPacket(&id, &err, &data_received);
+              ((AX12_DATA_PACKET*)sendBufferUsrAX12)->_byte[1] = data_received / 256;
+              ((AX12_DATA_PACKET*)sendBufferUsrAX12)->_byte[2] = data_received % 256;
+              userAX12Counter = 0x03;
+              break;
+          case READ_INFO:
+              ((AX12_DATA_PACKET*)sendBufferUsrAX12)->_byte[0] = ((AX12_DATA_PACKET*)recBuffPtr)->_byte[0];
+              id = (byte)(((AX12_DATA_PACKET*)recBuffPtr)->_byte[1]);
+              /*TODO add number of bytes to read*/
+
+           
+              ax12ReadPacket(&id, &err, &data_received);
+              ((AX12_DATA_PACKET*)sendBufferUsrAX12)->_byte[1] =  data_received;
+             /* if(!err){
+                  ((AX12_DATA_PACKET*)sendBufferUsrAX12)->_byte[1] =  (byte)data_received.LowB._byte;
+                  ((AX12_DATA_PACKET*)sendBufferUsrAX12)->_byte[2] =  (byte)data_received.HighB._byte;
+                  userAX12Counter = 0x03;
+              }else{
+                  ((AX12_DATA_PACKET*)sendBufferUsrAX12)->_byte[1] = 255;
+                  userAX12Counter = 0x02;
+              }*/
+              break;
         case RESET:
               Reset();
               break;
