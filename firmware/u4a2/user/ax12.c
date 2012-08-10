@@ -68,7 +68,7 @@ char bin2sign (boolean var) {                         // var = 0 --> sign = -1
 }
 
 int makeInt (byte l, byte h) {
-    return (h << 8) | l;
+    return (h*256) + l;
 }
 
 byte highByte(int value){
@@ -301,7 +301,7 @@ byte ax12ReadPacket(int* status_id, int* status_error, int* status_data){
         *status_error = ax_rx_buffer[0];
         switch (status_length) { //TODO: Se esta asumiendo que no vienen mas de 2 parametros ...
                 case 3: *status_data = ax_rx_buffer[1]; break;
-                case 4: *status_data = makeInt (ax_rx_buffer[1], ax_rx_buffer[2]); break;
+                case 4: *status_data = makeInt ( ax_rx_buffer[1], ax_rx_buffer[2]); break;
                 default: *status_data = -1;   //No hay datos
         }
     }
