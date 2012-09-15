@@ -8,13 +8,16 @@
 #include <delays.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
-#include "user/usr_ax12.h"
+#include "user/usr_dynamixel_bus.h"
 #include "io_cfg.h"              // I/O pin mapping
 #include "user/handlerManager.h"
 #include "dynamicPolling.h"   
 #include "usb4all/proxys/T0Service.h"
 
-  
+#define HEADER_LENGTH 0x02
+#define CRC_LENGTH 0x01
+#define LENGTH_BYTE 0x01
+
 /** V A R I A B L E S ********************************************************/
 #pragma udata 
 
@@ -153,37 +156,30 @@ void UserDynamixelBusReceived(byte* recBuffPtr, byte len){
       //WORD data_received;
       byte UserDynamixelBusCounter = 0;
       byte dynamixel_packet_length, dynamixel_bus_packet_length;
-      byte i;
+      byte i, j;
 
       switch(((DYNAMIXEL_BUS_DATA_PACKET*)recBuffPtr)->CMD){
         case READ_VERSION:
-              ((DYNAMIXEL_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[0] = ((DYNAMIXEL_DATA_PACKET*)recBuffPtr)->_byte[0];
-              ((DYNAMIXEL_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[1] = ((DYNAMIXEL_DATA_PACKET*)recBuffPtr)->_byte[1];
-              ((DYNAMIXEL_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[2] = AX12_MINOR_VERSION;
-              ((DYNAMIXEL_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[3] = AX12_MAJOR_VERSION;
+              ((DYNAMIXEL_BUS_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[0] = ((DYNAMIXEL_BUS_DATA_PACKET*)recBuffPtr)->_byte[0];
+              ((DYNAMIXEL_BUS_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[1] = ((DYNAMIXEL_BUS_DATA_PACKET*)recBuffPtr)->_byte[1];
+              ((DYNAMIXEL_BUS_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[2] = DYNAMIXEL_BUS_MINOR_VERSION;
+              ((DYNAMIXEL_BUS_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[3] = DYNAMIXEL_BUS_MAJOR_VERSION;
               UserDynamixelBusCounter = 0x04;
               break;  
-        case SEND:
-              ((DYNAMIXEL_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[0] = ((DYNAMIXEL_DATA_PACKET*)recBuffPtr)->_byte[0];
-              dynamixel_packet_length =  ((DYNAMIXEL_DATA_PACKET*)recBuffPtr)->_byte[4];
+        case SEND_BUS:
+              ((DYNAMIXEL_BUS_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[0] = ((DYNAMIXEL_BUS_DATA_PACKET*)recBuffPtr)->_byte[0];
+              dynamixel_packet_length =  ((DYNAMIXEL_BUS_DATA_PACKET*)recBuffPtr)->_byte[4];
               dynamixel_bus_packet_length = dynamixel_packet_length + HEADER_LENGTH + CRC_LENGTH + LENGTH_BYTE;
               setTX();
               for(i=1;i<=dynamixel_bus_packet_length;i++){
-                  ax12writeB(((DYNAMIXEL_DATA_PACKET*)recBuffPtr)->_byte[i]);
+                  ax12writeB(((DYNAMIXEL_BUS_DATA_PACKET*)recBuffPtr)->_byte[i]);
               }
               setRX();
               UserDynamixelBusCounter = 0x01;
               break;
-        case RECEIVE:
-              ((DYNAMIXEL_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[0] = ((DYNAMIXEL_DATA_PACKET*)recBuffPtr)->_byte[0];
-              id       = (byte)(((DYNAMIXEL_DATA_PACKET*)recBuffPtr)->_byte[1]);
-              data[0] = PRESENT_POSITION_L;
-              data[1] = 0x02; /*length of dTA , data);*/
-              ax12SendPacket (id, 0x02, READ_DATA , data);
-              value = ax12ReadPacket(&id, &err, &data_received);
-              ((DYNAMIXEL_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[1] = data_received / 256;
-              ((DYNAMIXEL_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[2] = data_received % 256;
-              UserDynamixelBusCounter = 0x03;
+        case RECEIVE_BUS:
+              ((DYNAMIXEL_BUS_DATA_PACKET*)sendBufferUsrDynamixelBus)->_byte[0] = ((DYNAMIXEL_BUS_DATA_PACKET*)recBuffPtr)->_byte[0];
+              UserDynamixelBusCounter = 0x02;
               break;
         case RESET:
               Reset();

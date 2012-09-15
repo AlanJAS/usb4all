@@ -27,8 +27,8 @@ typedef union DYNAMIXEL_BUS_DATA_PACKET{
         enum
         { 
             READ_VERSION    = 0x00,
-            SEND            = 0x01,
-            RECEIVE         = 0x02,
+            SEND_BUS        = 0x01,
+            RECEIVE_BUS     = 0x02
         } CMD;
         byte len;
     };
