@@ -186,7 +186,7 @@ void setNone(void){                 // Modo RESET
     TXSTAbits.TXEN = 0;             // deshabilita la transmisi�n
 }
 
-
+//TODO add a TIMEOUT TO THIS FUNCTION
 byte ax12writeB(byte data){
     while (!TXSTAbits.TRMT);        // wait until ready to send
     TXREG = data;
