@@ -174,6 +174,7 @@ void UserDynamixelBusReceived(byte* recBuffPtr, byte len){
               for(i=1;i<=dynamixel_bus_packet_length;i++){
                   ax12writeB(((DYNAMIXEL_BUS_DATA_PACKET*)recBuffPtr)->_byte[i]);
               }
+              while(!TXSTAbits.TRMT);
               setRX();
               UserDynamixelBusCounter = 0x01;
               break;

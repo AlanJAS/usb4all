@@ -147,24 +147,6 @@ void UserMotorsInit(byte i) {
     /* andres res = addPollingFunction(&UserMotorsProcessIO);*/
     // initialize the send buffer, used to send data to the PC
     sendBufferUsrMotors = getSharedBuffer(usrMotorsHandler);
-    ax12InitSerial();
-//    setEndlessTurnMode(wheels.left.id, 1);
-//    setEndlessTurnMode(wheels.right.id, 1);
-    // FIXME Add autodetection wheels
-//    wheels.left.id = 0x01;
-//    wheels.right.id = 0x02;
-    //Wheels ruedas;
-    /*Implementar funcion de auto deteccion para que detecte los motores*/
-    /*writeInfo (ruedas.left.id, CW_COMPLIANCE_MARGIN, 0);
-    writeInfo (ruedas.left.id, CCW_COMPLIANCE_MARGIN, 0);
-    writeInfo (ruedas.left.id, CW_COMPLIANCE_SLOPE, 95);
-    writeInfo (ruedas.left.id, CCW_COMPLIANCE_SLOPE, 95);
-    writeInfo (ruedas.left.id, PUNCH_L, 150);
-    writeInfo (ruedas.left.id, MAX_TORQUE_L, 1023);
-    writeInfo (LIMIT_TEMPERATURE, 85);
-    writeInfo (DOWN_LIMIT_VOLTAGE, 60);
-    writeInfo (DOWN_LIMIT_VOLTAGE, 190);
-    writeInfo (RETURN_DELAY_TIME, 150);*/
 }
 
 /******************************************************************************
