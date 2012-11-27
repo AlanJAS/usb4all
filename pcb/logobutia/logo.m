@@ -1,10 +1,10 @@
 
 trans=[
-      10 ,    0 ;
-      0   , 10 
+      1000 ,    0 ;
+      0   , 1000 
 ]
 
-trasl= [4000,4000]
+trasl= [40000,40000]
 
 
 fig1=[354.74583,388.98066;2.90725,2.67;3.00025,2.57625;2.51725,3.05875;2.43662,3.14125;1.20209,-0.35607;0.41241,-0.96518;-1.78493,-3.1194;-2.87532,-3.3731;-3.2459,-2.92688;-3.24872,-1.87937;-0.90944,0.36867]
@@ -32,7 +32,7 @@ fig7t = trans * fig7'
 % HARDCODE ALL FIG1!!!
 
 
-fig1 = round(fig1t')
+fig1 = round(fig7t')
 
 
 xmin = min(fig1(:,1)) + trasl(1)
@@ -42,11 +42,20 @@ ymax = max(fig1(:,2)) + trasl(2)
 
 z = size(fig1)(1)
 
+
+system ( "cp logobutia.brd.part0 logobutia.brd" )
+
+filename = "logobutia.brd";
+
+fid = fopen (filename, "a");
+# Do the actual I/O here...
+
+
 % esto es COBRE VISIBLE....
-printf ("ZCorner %d %d 0\n", xmax , ymax);
-printf ("ZCorner %d %d 0\n", xmax , ymin);
-printf ("ZCorner %d %d 0\n", xmin , ymin);
-printf ("ZCorner %d %d 1\n", xmin , ymax);
+fprintf (fid, "ZCorner %d %d 0\n", xmax , ymax);
+fprintf (fid,"ZCorner %d %d 0\n", xmax , ymin);
+fprintf (fid,"ZCorner %d %d 0\n", xmin , ymin);
+fprintf (fid, "ZCorner %d %d 1\n", xmin , ymax);
 
 
 for x = 1:z
@@ -54,16 +63,14 @@ for x = 1:z
   %continue;
 
   if (x == z)
-    printf ("ZCorner %d %d 1\n", fig1(x,1) + trasl(1) , fig1(x,2) + trasl(2));
+    fprintf (fid,"ZCorner %d %d 1\n", fig1(x,1) + trasl(1) , fig1(x,2) + trasl(2));
   else
-    printf ("ZCorner %d %d 0\n", fig1(x,1) + trasl(1) , fig1(x,2) + trasl(2));
+   fprintf (fid,"ZCorner %d %d 0\n", fig1(x,1) + trasl(1) , fig1(x,2) + trasl(2));
   endif
 endfor
 
 
+fclose (fid);
 
-
-
-
-
+system("cat logobutia.brd.part1 >> logobutia.brd ")
 
