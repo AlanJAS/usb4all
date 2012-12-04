@@ -29,10 +29,14 @@ fig5t = trans * fig5'
 fig6t = trans * fig6' 
 fig7t = trans * fig7' 
 
-% HARDCODE ALL FIG1!!!
 
-
-fig1 = round(fig3t')
+rfig1 = round(fig1t')
+rfig2 = round(fig2t')
+rfig3 = round(fig3t')
+rfig4 = round(fig4t')
+rfig5 = round(fig5t')
+rfig6 = round(fig6t')
+rfig7 = round(fig7t')
 
 
 %xmin = min(fig1(:,1)) + trasl(1)
@@ -40,7 +44,8 @@ fig1 = round(fig3t')
 %xmax = max(fig1(:,1)) + trasl(1)
 %ymax = max(fig1(:,2)) + trasl(2)
 
-z = size(fig1)(1)
+fig = rfig3
+
 
 
 system ( "cp logobutia.emp.part0 logobutia.emp" )
@@ -57,21 +62,29 @@ fid = fopen (filename, "a");
 %fprintf (fid,"ZCorner %d %d 0\n", xmin , ymin);
 %fprintf (fid, "ZCorner %d %d 1\n", xmin , ymax);
 
+%megamat = (rfig1, rfig2 , rfig3 , rfig4 , rfig5 , rfig6 , rfig7 )
 
+point = [0,0]
 
+for i = { rfig1, rfig2 , rfig3 , rfig4 , rfig5 , rfig6 , rfig7 }
 
- 
-  point_start = [fig1(1,1) , fig1(1,2)]
+  fig = i{1}
+
+  z = size(fig)(1)
+  point_start = [fig(1,1) , fig(1,2)] + point
   point = point_start 
+
   for x = 2:z
     %if (rem (x, 2) != 0) 
     %continue;
-    nextpoint = point + [fig1(x,1) , fig1(x,2)]
+    nextpoint = point + [fig(x,1) , fig(x,2)]
     fprintf (fid, "DS %d %d %d %d 150 21\n", point(1,1) , point(1,2) , nextpoint(1,1) , nextpoint(1,2) );
     point = nextpoint
   endfor
   fprintf (fid, "DS %d %d %d %d 150 21\n", point(1,1) , point(1,2) , point_start(1,1) , point_start(1,2) );
+  point = point_start
 
+endfor
 
 fclose (fid);
 
