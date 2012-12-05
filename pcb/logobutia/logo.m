@@ -1,10 +1,10 @@
 
 trans=[
-      1000 ,    0 ;
-      0   , 1000 
+      500 ,   0 , 0 ;
+      0   , 500 , 0 ;
+      0   ,   0 , 1 ;
 ]
 
-trasl= [40000,40000]
 
 
 fig1=[354.74583,388.98066;2.90725,2.67;3.00025,2.57625;2.51725,3.05875;2.43662,3.14125;1.20209,-0.35607;0.41241,-0.96518;-1.78493,-3.1194;-2.87532,-3.3731;-3.2459,-2.92688;-3.24872,-1.87937;-0.90944,0.36867]
@@ -21,26 +21,75 @@ fig6=[0.84412,15.00375;5.656,4.32375;7.737,2.2425;2.93563,0;9.15759,-2.27935;6.4
 
 fig7=[3.7288,8.18;-0.28191,-1.51361;-2.32439,-1.33264;-3.17905,-2.50559;-2.66482,-2.95066;-2.72763,-2.84875;-0.91628,0.44506;-0.25784,1.16869;1.93224,2.88994;3.05801,3.27256;3.43277,2.71126;2.25371,1.27379]
 
-fig1t = trans * fig1' 
-fig2t = trans * fig2' 
-fig3t = trans * fig3' 
-fig4t = trans * fig4' 
-fig5t = trans * fig5' 
-fig6t = trans * fig6' 
-fig7t = trans * fig7' 
 
-% HARDCODE ALL FIG1!!!
+figs = { fig1, fig2 , fig3 , fig4 , fig5 , fig6 , fig7 }
+
+glb = [  Inf ,  Inf ;
+        -Inf , -Inf 
+      ]
+
+point = [0,0]
+
+% convert to absolute values
+
+for i = 1:size(figs)(2)
+
+  fig = figs{i}
+
+  z = size(fig)(1)
+
+  for x = 1:z
+    point = point + fig(x,:)
+    fig(x,:) = point
+  endfor
+  point = fig(1,:)
+
+  glb(1,:) = min([ min(fig) ; glb(1,:) ]) ;
+  glb(2,:) = max([ max(fig) ; glb(2,:) ]) ;
+
+  figs{i} = fig ;
+
+endfor
+
+trasl = (glb(1,:) + glb(2,:)) / 2
+
+% Traslate to center!
+% adding 1 to coord3
+% aplling transform and round
+for i = 1:size(figs)(2)
+
+  fig = figs{i}
+
+  z = size(fig)(1)
+
+  for x = 1:z
+    fig(x,:) = fig(x,:) - trasl 
+  endfor
+
+  for x = 1:z
+    fig(x,3) = 1 ; 
+  endfor
+
+  fig = trans * fig'
+  fig = round(fig')
+
+  figs{i} = fig ;
+
+endfor
+
+% translating borders
+% and transfor
+
+glb(1,:) = glb(1,:) - trasl 
+glb(2,:) = glb(2,:) - trasl 
+
+glb(1,3) = 1
+glb(2,3) = 1
+
+glb = trans * glb'
+glb = round(glb')
 
 
-fig1 = round(fig7t')
-
-
-xmin = min(fig1(:,1)) + trasl(1)
-ymin = min(fig1(:,2)) + trasl(2)
-xmax = max(fig1(:,1)) + trasl(1)
-ymax = max(fig1(:,2)) + trasl(2)
-
-z = size(fig1)(1)
 
 
 system ( "cp logobutia.brd.part0 logobutia.brd" )
@@ -51,26 +100,52 @@ fid = fopen (filename, "a");
 # Do the actual I/O here...
 
 
-% esto es COBRE VISIBLE....
-fprintf (fid, "ZCorner %d %d 0\n", xmax , ymax);
-fprintf (fid,"ZCorner %d %d 0\n", xmax , ymin);
-fprintf (fid,"ZCorner %d %d 0\n", xmin , ymin);
-fprintf (fid, "ZCorner %d %d 1\n", xmin , ymax);
+fprintf (fid, "$CZONE_OUTLINE\n");
+fprintf (fid, "ZInfo 50AFE256 0 \"\"\n");
+fprintf (fid, "ZLayer 0\n");
+fprintf (fid, "ZAux 8 E\n");
+fprintf (fid, "ZClearance 200 T\n");
+fprintf (fid, "ZMinThickness 100\n");
+fprintf (fid, "ZOptions 0 16 F 200 200\n");
+fprintf (fid, "ZSmoothing 0 0\n");
 
 
-for x = 1:z
-  %if (rem (x, 2) != 0) 
-  %continue;
+% Apling coper....
+fprintf (fid, "ZCorner %d %d 0\n", glb(2,1) , glb(2,2));
+fprintf (fid,"ZCorner %d %d 0\n", glb(2,1) , glb(1,2));
+fprintf (fid,"ZCorner %d %d 0\n", glb(1,1) , glb(1,2));
+fprintf (fid, "ZCorner %d %d 1\n", glb(1,1) , glb(2,2));
 
-  if (x == z)
-    fprintf (fid,"ZCorner %d %d 1\n", fig1(x,1) + trasl(1) , fig1(x,2) + trasl(2));
-  else
-   fprintf (fid,"ZCorner %d %d 0\n", fig1(x,1) + trasl(1) , fig1(x,2) + trasl(2));
-  endif
+
+
+
+for i = figs
+
+  fig = i{1} ;
+  z = size(fig)(1)
+
+  for x = 1:z
+    %if (rem (x, 2) != 0) 
+    %continue;
+  
+    if (x == z)
+      fprintf (fid,"ZCorner %d %d 1\n", fig(x,1) , fig(x,2) );
+    else
+      fprintf (fid,"ZCorner %d %d 0\n", fig(x,1) , fig(x,2) );
+    endif
+  endfor
+
 endfor
+
+
+fprintf (fid,"$endCZONE_OUTLINE\n");
+
+
 
 
 fclose (fid);
 
 system("cat logobutia.brd.part1 >> logobutia.brd ")
+
+
 

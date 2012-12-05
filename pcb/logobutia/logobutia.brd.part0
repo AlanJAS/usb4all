@@ -82,12 +82,4 @@ $TRACK
 $EndTRACK
 $ZONE
 $EndZONE
-$CZONE_OUTLINE
-ZInfo 50AFE256 0 ""
-ZLayer 0
-ZAux 8 E
-ZClearance 200 T
-ZMinThickness 100
-ZOptions 0 16 F 200 200
-ZSmoothing 0 0
 
