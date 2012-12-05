@@ -119,7 +119,7 @@ fprintf (fid, "ZCorner %d %d 1\n", glb(1,1) , glb(2,2));
 
 
 
-for i = figs
+for i = {figs{1}, figs{2}, figs{4}, figs{6}, figs{7}  }
 
   fig = i{1} ;
   z = size(fig)(1)
@@ -141,6 +141,36 @@ endfor
 fprintf (fid,"$endCZONE_OUTLINE\n");
 
 
+fprintf (fid, "$CZONE_OUTLINE\n");
+fprintf (fid, "ZInfo 50AFE256 0 \"\"\n");
+fprintf (fid, "ZLayer 0\n");
+fprintf (fid, "ZAux 8 E\n");
+fprintf (fid, "ZClearance 200 T\n");
+fprintf (fid, "ZMinThickness 100\n");
+fprintf (fid, "ZOptions 0 16 F 200 200\n");
+fprintf (fid, "ZSmoothing 0 0\n");
+
+
+
+for i = {figs{5}, figs{3} }
+
+  fig = i{1} ;
+  z = size(fig)(1)
+
+  for x = 1:z
+    %if (rem (x, 2) != 0) 
+    %continue;
+  
+    if (x == z)
+      fprintf (fid,"ZCorner %d %d 1\n", fig(x,1) , fig(x,2) );
+    else
+      fprintf (fid,"ZCorner %d %d 0\n", fig(x,1) , fig(x,2) );
+    endif
+  endfor
+
+endfor
+
+fprintf (fid,"$endCZONE_OUTLINE\n");
 
 
 fclose (fid);
