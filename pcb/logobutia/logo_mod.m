@@ -1,10 +1,12 @@
 
 trans=[
-      1000 ,    0 ;
-      0   , 1000 
+      500 ,   0 , 0 ;
+      0   , 500 , 0 ;
+      0   ,   0 , 1 ;
 ]
 
-trasl= [0,0]
+trasl=[-153000,-205000]
+
 
 
 fig1=[354.74583,388.98066;2.90725,2.67;3.00025,2.57625;2.51725,3.05875;2.43662,3.14125;1.20209,-0.35607;0.41241,-0.96518;-1.78493,-3.1194;-2.87532,-3.3731;-3.2459,-2.92688;-3.24872,-1.87937;-0.90944,0.36867]
@@ -21,30 +23,7 @@ fig6=[0.84412,15.00375;5.656,4.32375;7.737,2.2425;2.93563,0;9.15759,-2.27935;6.4
 
 fig7=[3.7288,8.18;-0.28191,-1.51361;-2.32439,-1.33264;-3.17905,-2.50559;-2.66482,-2.95066;-2.72763,-2.84875;-0.91628,0.44506;-0.25784,1.16869;1.93224,2.88994;3.05801,3.27256;3.43277,2.71126;2.25371,1.27379]
 
-fig1t = trans * fig1' 
-fig2t = trans * fig2' 
-fig3t = trans * fig3' 
-fig4t = trans * fig4' 
-fig5t = trans * fig5' 
-fig6t = trans * fig6' 
-fig7t = trans * fig7' 
 
-
-rfig1 = round(fig1t')
-rfig2 = round(fig2t')
-rfig3 = round(fig3t')
-rfig4 = round(fig4t')
-rfig5 = round(fig5t')
-rfig6 = round(fig6t')
-rfig7 = round(fig7t')
-
-
-%xmin = min(fig1(:,1)) + trasl(1)
-%ymin = min(fig1(:,2)) + trasl(2)
-%xmax = max(fig1(:,1)) + trasl(1)
-%ymax = max(fig1(:,2)) + trasl(2)
-
-fig = rfig3
 
 
 
@@ -56,21 +35,22 @@ fid = fopen (filename, "a");
 # Do the actual I/O here...
 
 
-% esto es COBRE VISIBLE....
-%fprintf (fid, "ZCorner %d %d 0\n", xmax , ymax);
-%fprintf (fid,"ZCorner %d %d 0\n", xmax , ymin);
-%fprintf (fid,"ZCorner %d %d 0\n", xmin , ymin);
-%fprintf (fid, "ZCorner %d %d 1\n", xmin , ymax);
+point = trasl
 
-%megamat = (rfig1, rfig2 , rfig3 , rfig4 , rfig5 , rfig6 , rfig7 )
-
-point = [0,0]
-
-for i = { rfig1, rfig2 , rfig3 , rfig4 , rfig5 , rfig6 , rfig7 }
+for i = { fig1, fig2 , fig3 , fig4 , fig5 , fig6 , fig7 }
 
   fig = i{1}
 
   z = size(fig)(1)
+  % add 1 to coord 3 before aplic transform
+  for j = 1:z
+    fig(j,3) = 1 ;
+  endfor
+
+  fig = trans * fig'
+  fig = round(fig')
+
+
   point_start = [fig(1,1) , fig(1,2)] + point
   point = point_start 
 
