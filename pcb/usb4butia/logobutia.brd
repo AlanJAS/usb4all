@@ -1,0 +1,219 @@
+PCBNEW-BOARD Version 1 date vie 23 nov 2012 22:05:28 UYST
+
+# Created by Pcbnew(2012-apr-16-27)-stable
+
+$GENERAL
+encoding utf-8
+LayerCount 2
+Ly 1FFF8001
+EnabledLayers 1FFF8001
+Links 0
+NoConn 0
+Di 51000 32296 78930 44001
+Ndraw 0
+Ntrack 0
+Nzone 0
+BoardThickness 630
+Nmodule 0
+Nnets 1
+$EndGENERAL
+
+$SHEETDESCR
+Sheet A4 11700 8267
+Title ""
+Date "24 nov 2012"
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndSHEETDESCR
+
+$SETUP
+InternalUnit 0.000100 INCH
+Layers 2
+Layer[0] Back signal
+Layer[15] Front signal
+TrackWidth 80
+TrackClearence 100
+ZoneClearence 200
+TrackMinWidth 80
+DrawSegmWidth 150
+EdgeSegmWidth 150
+ViaSize 350
+ViaDrill 250
+ViaMinSize 350
+ViaMinDrill 200
+MicroViaSize 200
+MicroViaDrill 50
+MicroViasAllowed 0
+MicroViaMinSize 200
+MicroViaMinDrill 50
+TextPcbWidth 120
+TextPcbSize 600 800
+EdgeModWidth 150
+TextModSize 600 600
+TextModWidth 120
+PadSize 600 600
+PadDrill 320
+Pad2MaskClearance 100
+GridOrigin 45957 28457
+AuxiliaryAxisOrg 0 0
+PcbPlotParams (pcbplotparams (layerselection 3178497) (usegerberextensions true) (excludeedgelayer true) (linewidth 60) (plotframeref false) (viasonmask false) (mode 1) (useauxorigin false) (hpglpennumber 1) (hpglpenspeed 20) (hpglpendiameter 15) (hpglpenoverlay 0) (pscolor true) (psnegative false) (psa4output false) (plotreference true) (plotvalue true) (plotothertext true) (plotinvisibletext false) (padsonsilk false) (subtractmaskfromsilk false) (outputformat 1) (mirror false) (drillshape 1) (scaleselection 1) (outputdirectory ""))
+$EndSETUP
+
+$EQUIPOT
+Na 0 ""
+St ~
+$EndEQUIPOT
+$NCLASS
+Name "Default"
+Desc "This is the default net class."
+Clearance 100
+TrackWidth 80
+ViaDia 350
+ViaDrill 250
+uViaDia 200
+uViaDrill 50
+AddNet ""
+$EndNCLASS
+$TRACK
+$EndTRACK
+$ZONE
+$EndZONE
+
+$CZONE_OUTLINE
+ZInfo 50AFE256 0 ""
+ZLayer 0
+ZAux 8 E
+ZClearance 200 T
+ZMinThickness 100
+ZOptions 0 16 F 200 200
+ZSmoothing 0 0
+ZCorner 1218 1251 0
+ZCorner 1218 -1251 0
+ZCorner -1218 -1251 0
+ZCorner -1218 1251 1
+ZCorner 594 -1126 0
+ZCorner 740 -993 0
+ZCorner 890 -864 0
+ZCorner 1016 -711 0
+ZCorner 1138 -554 0
+ZCorner 1198 -572 0
+ZCorner 1218 -620 0
+ZCorner 1129 -776 0
+ZCorner 985 -945 0
+ZCorner 823 -1091 0
+ZCorner 660 -1185 0
+ZCorner 615 -1166 1
+ZCorner -1172 -725 0
+ZCorner -1167 -660 0
+ZCorner -1109 -666 0
+ZCorner -986 -792 0
+ZCorner -841 -949 0
+ZCorner -694 -1057 0
+ZCorner -543 -1185 0
+ZCorner -558 -1236 0
+ZCorner -602 -1251 0
+ZCorner -783 -1154 0
+ZCorner -951 -1013 0
+ZCorner -1091 -869 1
+ZCorner 773 1143 0
+ZCorner 856 1077 0
+ZCorner 919 1018 0
+ZCorner 1071 852 0
+ZCorner 1160 723 0
+ZCorner 1139 655 0
+ZCorner 1086 642 0
+ZCorner 956 791 0
+ZCorner 842 914 0
+ZCorner 671 1056 0
+ZCorner 588 1104 0
+ZCorner 521 1178 0
+ZCorner 542 1235 0
+ZCorner 587 1251 0
+ZCorner 703 1194 1
+ZCorner -787 769 0
+ZCorner -504 985 0
+ZCorner -117 1097 0
+ZCorner 29 1097 0
+ZCorner 487 983 0
+ZCorner 808 730 0
+ZCorner 996 425 0
+ZCorner 1071 48 0
+ZCorner 1071 -40 0
+ZCorner 1039 -245 0
+ZCorner 962 -445 0
+ZCorner 747 -743 0
+ZCorner 433 -959 0
+ZCorner 29 -1053 0
+ZCorner -429 -966 0
+ZCorner -845 -658 0
+ZCorner -1013 -368 0
+ZCorner -1086 18 0
+ZCorner -1003 444 1
+ZCorner -601 1178 0
+ZCorner -615 1102 0
+ZCorner -731 1035 0
+ZCorner -890 910 0
+ZCorner -1023 762 0
+ZCorner -1160 620 0
+ZCorner -1205 642 0
+ZCorner -1218 701 0
+ZCorner -1122 845 0
+ZCorner -969 1009 0
+ZCorner -797 1144 0
+ZCorner -684 1208 1
+$endCZONE_OUTLINE
+$CZONE_OUTLINE
+ZInfo 50AFE256 0 ""
+ZLayer 0
+ZAux 8 E
+ZClearance 200 T
+ZMinThickness 100
+ZOptions 0 16 F 200 200
+ZSmoothing 0 0
+ZCorner -829 18 0
+ZCorner -770 -278 0
+ZCorner -607 -530 0
+ZCorner -386 -698 0
+ZCorner -3 -788 0
+ZCorner 400 -682 0
+ZCorner 581 -533 0
+ZCorner 728 -335 0
+ZCorner 813 35 0
+ZCorner 741 348 0
+ZCorner 563 611 0
+ZCorner 346 763 0
+ZCorner 0 842 0
+ZCorner -285 788 0
+ZCorner -582 607 0
+ZCorner -797 246 1
+ZCorner -521 -371 0
+ZCorner -504 -301 0
+ZCorner -376 -163 0
+ZCorner -205 11 0
+ZCorner -491 309 0
+ZCorner -532 386 0
+ZCorner -485 486 0
+ZCorner -404 547 0
+ZCorner -279 500 0
+ZCorner -7 216 0
+ZCorner 276 487 0
+ZCorner 362 535 0
+ZCorner 465 500 0
+ZCorner 521 400 0
+ZCorner 480 310 0
+ZCorner 199 20 0
+ZCorner 492 -283 0
+ZCorner 515 -371 0
+ZCorner 468 -446 0
+ZCorner 382 -495 0
+ZCorner 298 -471 0
+ZCorner -7 -180 0
+ZCorner -302 -465 0
+ZCorner -382 -495 0
+ZCorner -482 -457 1
+$endCZONE_OUTLINE
+$EndBOARD

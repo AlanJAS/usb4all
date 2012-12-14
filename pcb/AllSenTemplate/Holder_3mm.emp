@@ -1,0 +1,23 @@
+PCBNEW-LibModule-V1  mié 12 dic 2012 10:39:47 UYST
+# encoding utf-8
+$INDEX
+Lego_Holder
+$EndINDEX
+$MODULE Lego_Holder
+Po 0 0 0 15 50C87AE2 50C87A72 ~~
+Li Lego_Holder
+Sc 50C87A72
+AR Lego_Holder
+Op 0 0 0
+T0 0 0 167 167 0 42 N V 21 N "Holder_3mm"
+T1 0 2500 600 600 0 120 N V 21 N ""
+DC 0 0 787 -98 150 21
+$PAD
+Sh "1" C 1182 1182 0 0 0
+Dr 1182 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 0 0
+$EndPAD
+$EndMODULE  Lego_Holder
+$EndLIBRARY
