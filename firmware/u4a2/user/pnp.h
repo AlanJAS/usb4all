@@ -31,6 +31,9 @@
 #define R_LED_MIN 1493
 #define R_SHIELD_CC_MAX 12531
 #define R_SHIELD_CC_MIN 10622
+#define R_BAR_MAX 46054
+#define R_BAR_MIN 43200
+
 
 #define R_LUZ 9999
 #define R_ACCELEROMETER 9999
