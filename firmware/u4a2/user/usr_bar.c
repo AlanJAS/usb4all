@@ -25,8 +25,8 @@
 
 #define MAX_DWORD 4294967295
 #define MS 636
-//#define TIME_UNIT  100
-#define TIME_UNIT  1
+#define TIME_UNIT  65500
+//#define TIME_UNIT  1
 
 /** V A R I A B L E S ********************************************************/
 #pragma udata
@@ -37,6 +37,7 @@ byte start;
 byte bar_handler;
 WORD bar_value;
 DWORD tics;
+byte termine;
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 void UserBarProcessIO(void);
@@ -81,8 +82,8 @@ void UserBarInit(byte usrBarHandler) {
     start = FALSE;
     state = END_COUNTING_STATE;
     bar_handler = usrBarHandler;
-    addPollingFunction(&UserBarProcessIO);
     tics._dword=0;
+    termine = TRUE;
 }/*end UserBarInit*/
 
 
@@ -90,11 +91,11 @@ void tics_rtn(void){
     if (state==COUNTING_STATE){
         if (tics._dword==MAX_DWORD){
             tics._dword=0;
+            registerT0eventInEvent(TIME_UNIT, &tics_rtn);
         }
         else{
             tics._dword++;
         }
-        registerT0eventInEvent(TIME_UNIT, &tics_rtn);
     }
 }
 
@@ -116,33 +117,38 @@ void tics_rtn(void){
  * Note:            None
  *****************************************************************************/
 void UserBarProcessIO(void) {
-    if ((usb_device_state < CONFIGURED_STATE) || (UCONbits.SUSPND == (unsigned) 1)) return;
-    switch (state){
-        case WAIT_RISING_EDGE_STATE:
-            if(getPortDescriptor(bar_handler)->get_data_analog()._word > 30000){
-                state=WAIT_FALLING_EDGE_STATE;
-            }
-            break;
-        case WAIT_FALLING_EDGE_STATE:
-            if(getPortDescriptor(bar_handler)->get_data_analog()._word < 30000){
-                state=COUNTING_STATE;
-                tics._dword = 0;
-                registerT0event(TIME_UNIT, &tics_rtn);
-            }
-            break;
-        case COUNTING_STATE:
-            if(getPortDescriptor(bar_handler)->get_data_analog()._word > 30000){
-                state=END_COUNTING_STATE;
-            }
-            break;
-        case END_COUNTING_STATE:
-            if(start == TRUE){
-                state=WAIT_RISING_EDGE_STATE;
-                start=FALSE;
-            }
-            break;
-        default:
-            break;
+    if ((usb_device_state < CONFIGURED_STATE) || (UCONbits.SUSPND == (unsigned) 1)) return;    
+    while(!termine){
+        switch (state){
+            case WAIT_RISING_EDGE_STATE:
+                if(getPortDescriptor(bar_handler)->get_data_analog()._word > 30000){
+                    state=WAIT_FALLING_EDGE_STATE;
+                }
+                break;
+            case WAIT_FALLING_EDGE_STATE:
+                if(getPortDescriptor(bar_handler)->get_data_analog()._word < 30000){
+                    state=COUNTING_STATE;
+                    tics._dword = 0;
+                    registerT0event(TIME_UNIT, &tics_rtn);
+                }
+                break;
+            case COUNTING_STATE:
+                if(getPortDescriptor(bar_handler)->get_data_analog()._word > 30000){
+                    state=END_COUNTING_STATE;
+                }
+                break;
+            case END_COUNTING_STATE:
+                if(start == TRUE){
+                    state=WAIT_RISING_EDGE_STATE;
+                    start=FALSE;
+                    removePoolingFunction(&UserBarProcessIO);
+                    termine=TRUE;
+                    break;
+                }
+                break;
+            default:
+                break;
+        }
     }
 }/*end UserBarProcessIO*/
 
@@ -207,6 +213,8 @@ void UserBarReceived(byte* recBuffPtr, byte len, byte handler) {
             start=TRUE;
             ((BAR_DATA_PACKET*) sendBufferUsrBar)->_byte[0] = ((BAR_DATA_PACKET*) recBuffPtr)->_byte[0];
             userBarCounter = 0x01;
+            termine = FALSE;
+            addPollingFunction(&UserBarProcessIO);
             break;
 
         case IS_COUNTING:
