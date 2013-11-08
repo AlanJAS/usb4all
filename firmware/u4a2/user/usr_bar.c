@@ -25,7 +25,7 @@
 
 #define MAX_DWORD 4294967295
 #define MS 636
-#define TIME_UNIT  65500
+#define TIME_UNIT  100
 //#define TIME_UNIT  1
 
 /** V A R I A B L E S ********************************************************/
@@ -84,6 +84,7 @@ void UserBarInit(byte usrBarHandler) {
     bar_handler = usrBarHandler;
     tics._dword=0;
     termine = TRUE;
+    addPollingFunction(&UserBarProcessIO);
 }/*end UserBarInit*/
 
 
@@ -135,15 +136,16 @@ void UserBarProcessIO(void) {
             case COUNTING_STATE:
                 if(getPortDescriptor(bar_handler)->get_data_analog()._word > 30000){
                     state=END_COUNTING_STATE;
+                    start=FALSE;
                 }
                 break;
             case END_COUNTING_STATE:
                 if(start == TRUE){
                     state=WAIT_RISING_EDGE_STATE;
                     start=FALSE;
-                    removePoolingFunction(&UserBarProcessIO);
+                    //removePoolingFunction(&UserBarProcessIO);
+                }else{
                     termine=TRUE;
-                    break;
                 }
                 break;
             default:
@@ -214,7 +216,7 @@ void UserBarReceived(byte* recBuffPtr, byte len, byte handler) {
             ((BAR_DATA_PACKET*) sendBufferUsrBar)->_byte[0] = ((BAR_DATA_PACKET*) recBuffPtr)->_byte[0];
             userBarCounter = 0x01;
             termine = FALSE;
-            addPollingFunction(&UserBarProcessIO);
+            //addPollingFunction(&UserBarProcessIO);
             break;
 
         case IS_COUNTING:
