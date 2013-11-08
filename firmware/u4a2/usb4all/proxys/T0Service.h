@@ -11,7 +11,8 @@
 #define MAX_T0CALLS (byte)  10
 
 //default clock initializacion (comment out if undesired)
-#define DEFAULT_CLOCK_CONFIG	0x07
+//#define DEFAULT_CLOCK_CONFIG	0x07
+#define DEFAULT_CLOCK_CONFIG	0x03
 
 /** I N C L U D E S **********************************************************/
 

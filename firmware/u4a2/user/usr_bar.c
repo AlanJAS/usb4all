@@ -26,6 +26,7 @@
 #define MAX_DWORD 4294967295
 #define MS 636
 #define TIME_UNIT  100
+#define TIME_UNIT_FSM 1
 //#define TIME_UNIT  1
 
 /** V A R I A B L E S ********************************************************/
@@ -33,7 +34,6 @@
 
 byte* sendBufferUsrBar; /* buffer to send data*/
 byte state;
-byte start;
 byte bar_handler;
 WORD bar_value;
 DWORD tics;
@@ -79,11 +79,10 @@ void UserBarInit(byte usrBarHandler) {
     sendBufferUsrBar = getSharedBuffer(usrBarHandler);
     /* get port where sensor/actuator is connected and set to IN/OUT mode*/
     getPortDescriptor(usrBarHandler)->change_port_direction(IN);
-    start = FALSE;
     state = END_COUNTING_STATE;
     bar_handler = usrBarHandler;
     tics._dword=0;
-    termine = TRUE;
+    termine = FALSE;
     addPollingFunction(&UserBarProcessIO);
 }/*end UserBarInit*/
 
@@ -97,6 +96,36 @@ void tics_rtn(void){
         else{
             tics._dword++;
         }
+    }
+}
+
+void BarFSM(void){
+    switch (state){
+        case WAIT_RISING_EDGE_STATE:
+            if(getPortDescriptor(bar_handler)->get_data_analog()._word > 30000){
+                state=WAIT_FALLING_EDGE_STATE;
+            }
+            break;
+        case WAIT_FALLING_EDGE_STATE:
+            if(getPortDescriptor(bar_handler)->get_data_analog()._word < 30000){
+                state=COUNTING_STATE;
+                tics._dword = 0;
+                ///registerT0event(TIME_UNIT, &tics_rtn);
+            }
+            break;
+        case COUNTING_STATE:
+            if(getPortDescriptor(bar_handler)->get_data_analog()._word > 30000){
+                state=END_COUNTING_STATE;
+            }
+            break;
+        case END_COUNTING_STATE:
+            termine=TRUE;
+            break;
+        default:
+            break;
+    }
+    if(!termine){
+        registerT0eventInEvent(TIME_UNIT_FSM, &BarFSM);
     }
 }
 
@@ -119,39 +148,6 @@ void tics_rtn(void){
  *****************************************************************************/
 void UserBarProcessIO(void) {
     if ((usb_device_state < CONFIGURED_STATE) || (UCONbits.SUSPND == (unsigned) 1)) return;    
-    while(!termine){
-        switch (state){
-            case WAIT_RISING_EDGE_STATE:
-                if(getPortDescriptor(bar_handler)->get_data_analog()._word > 30000){
-                    state=WAIT_FALLING_EDGE_STATE;
-                }
-                break;
-            case WAIT_FALLING_EDGE_STATE:
-                if(getPortDescriptor(bar_handler)->get_data_analog()._word < 30000){
-                    state=COUNTING_STATE;
-                    tics._dword = 0;
-                    registerT0event(TIME_UNIT, &tics_rtn);
-                }
-                break;
-            case COUNTING_STATE:
-                if(getPortDescriptor(bar_handler)->get_data_analog()._word > 30000){
-                    state=END_COUNTING_STATE;
-                    start=FALSE;
-                }
-                break;
-            case END_COUNTING_STATE:
-                if(start == TRUE){
-                    state=WAIT_RISING_EDGE_STATE;
-                    start=FALSE;
-                    //removePoolingFunction(&UserBarProcessIO);
-                }else{
-                    termine=TRUE;
-                }
-                break;
-            default:
-                break;
-        }
-    }
 }/*end UserBarProcessIO*/
 
 /******************************************************************************
@@ -174,6 +170,7 @@ void UserBarProcessIO(void) {
 void UserBarRelease(byte i) {
     unsetHandlerReceiveBuffer(i);
     unsetHandlerReceiveFunction(i);
+    //removePoolingFunction(&UserBarProcessIO);
 }/*end UserGreyRelease*/
 
 /******************************************************************************
@@ -212,11 +209,12 @@ void UserBarReceived(byte* recBuffPtr, byte len, byte handler) {
             break;
 
         case START:
-            start=TRUE;
+            termine=FALSE;
             ((BAR_DATA_PACKET*) sendBufferUsrBar)->_byte[0] = ((BAR_DATA_PACKET*) recBuffPtr)->_byte[0];
             userBarCounter = 0x01;
-            termine = FALSE;
             //addPollingFunction(&UserBarProcessIO);
+            state = WAIT_RISING_EDGE_STATE;
+            registerT0event(TIME_UNIT_FSM, &BarFSM);
             break;
 
         case IS_COUNTING:
