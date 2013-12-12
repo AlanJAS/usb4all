@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date mié 23 may 2012 10:33:15 UYT
+EESchema Schematic File Version 2  date jue 12 dic 2013 17:26:16 UYST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -29,14 +29,14 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:sharp-cache
-EELAYER 25  0
+LIBS:logo
+EELAYER 24 0
 EELAYER END
-$Descr A4 11700 8267
+$Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "23 may 2012"
+Date "12 dec 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -70,6 +70,8 @@ U 1 1 4F91ECE3
 P 3750 3200
 F 0 "K1" V 3700 3200 50  0000 C CNN
 F 1 "CONN_3" V 3800 3200 40  0000 C CNN
+F 2 "" H 3750 3200 60  0001 C CNN
+F 3 "" H 3750 3200 60  0001 C CNN
 	1    3750 3200
 	1    0    0    -1  
 $EndComp
@@ -83,6 +85,8 @@ U 1 1 4FAC1BA4
 P 3900 2250
 F 0 "R2" V 3980 2250 50  0000 C CNN
 F 1 "R" V 3900 2250 50  0000 C CNN
+F 2 "" H 3900 2250 60  0001 C CNN
+F 3 "" H 3900 2250 60  0001 C CNN
 	1    3900 2250
 	1    0    0    -1  
 $EndComp
@@ -110,7 +114,28 @@ U 1 1 4F68816E
 P 2350 1500
 F 0 "J1" H 2550 2000 60  0000 C CNN
 F 1 "RJ45" H 2200 2000 60  0000 C CNN
+F 2 "" H 2350 1500 60  0001 C CNN
+F 3 "" H 2350 1500 60  0001 C CNN
 	1    2350 1500
 	1    0    0    -1  
 $EndComp
+$Comp
+L CAPAPOL C1
+U 1 1 52AA0366
+P 1400 2850
+F 0 "C1" H 1450 2950 40  0000 L CNN
+F 1 "CAPAPOL" H 1450 2750 40  0000 L CNN
+F 2 "~" H 1500 2700 30  0000 C CNN
+F 3 "~" H 1400 2850 300 0000 C CNN
+	1    1400 2850
+	1    0    0    -1  
+$EndComp
+Text GLabel 1400 3200 3    60   Input ~ 0
+GND
+Wire Wire Line
+	1400 3200 1400 3050
+Wire Wire Line
+	1400 2650 1400 2450
+Text GLabel 1400 2450 1    60   Input ~ 0
+VDD
 $EndSCHEMATC
