@@ -5,7 +5,7 @@
     (no_connects 14)
     (area 103.43962 49.826714 213.565378 148.39188)
     (thickness 1.6002)
-    (drawings 53)
+    (drawings 55)
     (tracks 235)
     (zones 0)
     (modules 82)
@@ -212,7 +212,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 5182A265) (tstamp 50C7ADC6)
+  (module R3 (layer Front) (tedit 549E11F4) (tstamp 50C7ADC6)
     (at 183.52008 120.142 270)
     (descr "Resitance 3 pas")
     (tags R)
@@ -221,8 +221,8 @@
     (fp_text reference R3 (at 0 0 270) (layer F.SilkS) hide
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
-    (fp_text value R (at 0 0 270) (layer F.SilkS)
-      (effects (font (size 1.397 1.27) (thickness 0.2032)))
+    (fp_text value R120Ω (at 0 0 270) (layer F.SilkS)
+      (effects (font (size 1.197 1.07) (thickness 0.2032)))
     )
     (fp_line (start -3.81 0) (end -3.302 0) (layer F.SilkS) (width 0.3048))
     (fp_line (start 3.81 0) (end 3.302 0) (layer F.SilkS) (width 0.3048))
@@ -247,7 +247,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 5182A272) (tstamp 50C7ADC4)
+  (module R3 (layer Front) (tedit 549E0C6B) (tstamp 50C7ADC4)
     (at 187.70092 120.0531 90)
     (descr "Resitance 3 pas")
     (tags R)
@@ -256,7 +256,7 @@
     (fp_text reference R2 (at 0 0 90) (layer F.SilkS) hide
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
-    (fp_text value ID (at 0 0 90) (layer F.SilkS)
+    (fp_text value R1K (at 0 0 90) (layer F.SilkS)
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
     (fp_line (start -3.81 0) (end -3.302 0) (layer F.SilkS) (width 0.3048))
@@ -282,7 +282,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 5182A289) (tstamp 50C7ADC2)
+  (module R3 (layer Front) (tedit 549E0C73) (tstamp 50C7ADC2)
     (at 192.22974 120.0531 90)
     (descr "Resitance 3 pas")
     (tags R)
@@ -291,7 +291,7 @@
     (fp_text reference R1 (at 0 0 90) (layer F.SilkS) hide
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
-    (fp_text value R (at 0 0 90) (layer F.SilkS)
+    (fp_text value R10kΩ (at 0 0 90) (layer F.SilkS)
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
     (fp_line (start -3.81 0) (end -3.302 0) (layer F.SilkS) (width 0.3048))
@@ -588,7 +588,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 5182A220) (tstamp 50C7ADA5)
+  (module R3 (layer Front) (tedit 549E0D11) (tstamp 50C7ADA5)
     (at 150.11654 120.13946 270)
     (descr "Resitance 3 pas")
     (tags R)
@@ -597,8 +597,8 @@
     (fp_text reference R3 (at 0 0 270) (layer F.SilkS) hide
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
-    (fp_text value R (at 0 0 270) (layer F.SilkS)
-      (effects (font (size 1.397 1.27) (thickness 0.2032)))
+    (fp_text value R120Ω (at 0 0 270) (layer F.SilkS)
+      (effects (font (size 1.197 1.07) (thickness 0.2032)))
     )
     (fp_line (start -3.81 0) (end -3.302 0) (layer F.SilkS) (width 0.3048))
     (fp_line (start 3.81 0) (end 3.302 0) (layer F.SilkS) (width 0.3048))
@@ -623,7 +623,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 5182A1FC) (tstamp 50C7ADA3)
+  (module R3 (layer Front) (tedit 549E0D1D) (tstamp 50C7ADA3)
     (at 154.29738 120.05056 90)
     (descr "Resitance 3 pas")
     (tags R)
@@ -632,8 +632,8 @@
     (fp_text reference R2 (at 0 0 90) (layer F.SilkS) hide
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
-    (fp_text value ID (at 0 0 90) (layer F.SilkS)
-      (effects (font (size 1.397 1.27) (thickness 0.2032)))
+    (fp_text value R1kΩ (at 0 0 90) (layer F.SilkS)
+      (effects (font (size 1.197 1.07) (thickness 0.2032)))
     )
     (fp_line (start -3.81 0) (end -3.302 0) (layer F.SilkS) (width 0.3048))
     (fp_line (start 3.81 0) (end 3.302 0) (layer F.SilkS) (width 0.3048))
@@ -658,7 +658,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 5182A23C) (tstamp 50C7ADA1)
+  (module R3 (layer Front) (tedit 549E0D25) (tstamp 50C7ADA1)
     (at 158.8262 120.05056 90)
     (descr "Resitance 3 pas")
     (tags R)
@@ -667,8 +667,8 @@
     (fp_text reference R1 (at 0 0 90) (layer F.SilkS) hide
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
-    (fp_text value R (at 0 0 90) (layer F.SilkS)
-      (effects (font (size 1.397 1.27) (thickness 0.2032)))
+    (fp_text value R10kΩ (at 0 0 90) (layer F.SilkS)
+      (effects (font (size 1.197 1.07) (thickness 0.2032)))
     )
     (fp_line (start -3.81 0) (end -3.302 0) (layer F.SilkS) (width 0.3048))
     (fp_line (start 3.81 0) (end 3.302 0) (layer F.SilkS) (width 0.3048))
@@ -964,7 +964,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 5182A1DE) (tstamp 50C7AD21)
+  (module R3 (layer Front) (tedit 549E0C27) (tstamp 50C7AD21)
     (at 116.71808 120.13946 270)
     (descr "Resitance 3 pas")
     (tags R)
@@ -999,7 +999,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 5182A193) (tstamp 50C7AD1F)
+  (module R3 (layer Front) (tedit 549E11E1) (tstamp 50C7AD1F)
     (at 120.89892 120.05056 90)
     (descr "Resitance 3 pas")
     (tags R)
@@ -1008,8 +1008,8 @@
     (fp_text reference R2 (at 0 0 90) (layer F.SilkS) hide
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
-    (fp_text value ID (at 0 0 90) (layer F.SilkS)
-      (effects (font (size 1.397 1.27) (thickness 0.2032)))
+    (fp_text value R68kΩ (at 0 0 90) (layer F.SilkS)
+      (effects (font (size 1.197 1.07) (thickness 0.2032)))
     )
     (fp_line (start -3.81 0) (end -3.302 0) (layer F.SilkS) (width 0.3048))
     (fp_line (start 3.81 0) (end 3.302 0) (layer F.SilkS) (width 0.3048))
@@ -1034,7 +1034,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 5182A1D1) (tstamp 50C7AD1D)
+  (module R3 (layer Front) (tedit 549E11E7) (tstamp 50C7AD1D)
     (at 125.42774 120.05056 90)
     (descr "Resitance 3 pas")
     (tags R)
@@ -1043,8 +1043,8 @@
     (fp_text reference R1 (at 0 0 90) (layer F.SilkS) hide
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
-    (fp_text value R (at 0 0 90) (layer F.SilkS)
-      (effects (font (size 1.397 1.27) (thickness 0.2032)))
+    (fp_text value R68kΩ (at 0 0 90) (layer F.SilkS)
+      (effects (font (size 1.197 1.07) (thickness 0.2032)))
     )
     (fp_line (start -3.81 0) (end -3.302 0) (layer F.SilkS) (width 0.3048))
     (fp_line (start 3.81 0) (end 3.302 0) (layer F.SilkS) (width 0.3048))
@@ -1479,7 +1479,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 5182723A) (tstamp 4FB103DB)
+  (module R3 (layer Front) (tedit 549E092D) (tstamp 4FB103DB)
     (at 166.48938 83.2993)
     (descr "Resitance 3 pas")
     (tags R)
@@ -1488,7 +1488,7 @@
     (fp_text reference R1 (at 0 0) (layer F.SilkS) hide
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
-    (fp_text value 10kΩ (at 0 0) (layer F.SilkS)
+    (fp_text value R10kΩ (at 0 0) (layer F.SilkS)
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
     (fp_line (start -3.81 0) (end -3.302 0) (layer F.SilkS) (width 0.3048))
@@ -1514,7 +1514,7 @@
     )
   )
 
-  (module R3 (layer Front) (tedit 51827222) (tstamp 4FB103DD)
+  (module R3 (layer Front) (tedit 549E0918) (tstamp 4FB103DD)
     (at 166.48938 79.82966 180)
     (descr "Resitance 3 pas")
     (tags R)
@@ -1523,7 +1523,7 @@
     (fp_text reference R2 (at 0 0 180) (layer F.SilkS) hide
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
-    (fp_text value 10kΩ (at 0 0 180) (layer F.SilkS)
+    (fp_text value R10kΩ (at 0 0 180) (layer F.SilkS)
       (effects (font (size 1.397 1.27) (thickness 0.2032)))
     )
     (fp_line (start -3.81 0) (end -3.302 0) (layer F.SilkS) (width 0.3048))
@@ -2042,6 +2042,8 @@
     )
   )
 
+  (gr_line (start 148.5 63.5) (end 184.5 63.5) (angle 90) (layer Edge.Cuts) (width 0.381))
+  (gr_line (start 148.5 53) (end 148.5 63.5) (angle 90) (layer Edge.Cuts) (width 0.381))
   (gr_text "Designed in\n Uruguay" (at 188.84138 134.99084) (layer B.SilkS)
     (effects (font (size 1.03124 0.52324) (thickness 0.13208)))
   )
