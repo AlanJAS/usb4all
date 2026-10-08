@@ -9,6 +9,7 @@
 
 /** I N C L U D E S **********************************************************/
 #include "system/typedefs.h"
+#include "user/loaderModule.h"
 #include "user/defines.h"
 #include "user/descriptorManager.h"
 #include "user/usb4butia.h"
@@ -25,7 +26,7 @@ typedef struct _epHandlerMapItem{
 	endpoint ep;
 	// Se necesita para tener una forma
 	// de determinar si un modulo ya esta abierto, y para que el close obtenga el ptero a la fs close del usuario
-	const char* uTableDirection;
+	const uTab *uTableDirection;
 } epHandlerMapItem;
 
 typedef union _HM_DATA_PACKET_HEADER {
@@ -68,10 +69,10 @@ void USBGenWrite2(byte handler, byte len);
 void initHandlerBuffers(void);
 void setHandlerReceiveBuffer(byte handler, byte *rb);
 void setHandlerReceiveFunction(byte handler,void (*pf) (byte* recBuffPtr,byte, byte));
-byte newHandlerTableEntry(byte endPIn, const char* uTableDirection);
-byte newHandlerTableEntryForcingHandler(byte endPIn, const char* uTableDirection, byte handler);
-BOOL existsTableEntry(const char* uTableDirection);
-byte handlerFromTableEntry(const char* uTableDirection);
+byte newHandlerTableEntry(byte endPIn, const uTab *uTableDirection);
+byte newHandlerTableEntryForcingHandler(byte endPIn, const uTab *uTableDirection, byte handler);
+BOOL existsTableEntry(const uTab *uTableDirection);
+byte handlerFromTableEntry(const uTab *uTableDirection);
 void initHandlerTable();
 void initHandlerManager(void);
 respType removeHandlerTableEntry(byte handler);

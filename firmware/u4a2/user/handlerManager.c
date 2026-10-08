@@ -115,7 +115,7 @@ void USBGenWrite2(byte handler, byte len) {
 
 }//end USBGenWrite
 
-byte newHandlerTableEntry(byte endPIn, const char* uTableDirection){
+byte newHandlerTableEntry(byte endPIn, const uTab *uTableDirection){
     byte i = 0;
     while (i < MAX_HANDLERS){
         if (epHandlerMap[i].ep.empty == (unsigned) 1) {
@@ -129,7 +129,7 @@ byte newHandlerTableEntry(byte endPIn, const char* uTableDirection){
     return ERROR;
 }
 
-byte newHandlerTableEntryForcingHandler(byte endPIn, const char* uTableDirection, byte handler){
+byte newHandlerTableEntryForcingHandler(byte endPIn, const uTab *uTableDirection, byte handler){
     if (epHandlerMap[handler].ep.empty == (unsigned) 1) {
         epHandlerMap[handler].ep.endPoint = endPIn;
         epHandlerMap[handler].ep.empty = 0;
@@ -140,10 +140,11 @@ byte newHandlerTableEntryForcingHandler(byte endPIn, const char* uTableDirection
     }
 }
 
-BOOL existsTableEntry(const char* uTableDirection){
+BOOL existsTableEntry(const uTab *uTableDirection){
     byte i=0;
     while (i<MAX_HANDLERS){
-        if (epHandlerMap[i].uTableDirection == uTableDirection) {
+        if (uTableDirection != 0 && !epHandlerMap[i].ep.empty &&
+            epHandlerMap[i].uTableDirection == uTableDirection) {
             return TRUE;
         }
         i++;
@@ -151,10 +152,11 @@ BOOL existsTableEntry(const char* uTableDirection){
     return FALSE;
 }
 
-byte handlerFromTableEntry(const char* uTableDirection){
+byte handlerFromTableEntry(const uTab *uTableDirection){
     byte i = 0;
     while (i < MAX_HANDLERS){
-        if (epHandlerMap[i].uTableDirection == uTableDirection) {
+        if (uTableDirection != 0 && !epHandlerMap[i].ep.empty &&
+            epHandlerMap[i].uTableDirection == uTableDirection) {
             return i;
         }
         i++;

@@ -7,6 +7,7 @@
  ********************************************************************/
 
 #include "user/adminModule.h"
+#include "system/xc8_eeprom.h"
 #include "user/pnp.h"
 #include "user/usb4butia.h"
 #include "handlerManager.h"
@@ -62,7 +63,7 @@ void adminReceived(byte* recBuffPtr, byte len, byte admin_handler) {
     byte endIn = nullEP;
     byte lineNumber = 0;
     char lineName[8];
-    const char* tableDirec;
+    const uTab *tableDirec;
     void (*pUser)(byte);
     byte handler, response;
     byte j;
@@ -79,7 +80,7 @@ void adminReceived(byte* recBuffPtr, byte len, byte admin_handler) {
         case U4A_ADMINMODULE_OPEN:
             tableDirec = getUserTableDirection(((AM_PACKET*) recBuffPtr)->moduleId);
             if(!existsTableEntry(tableDirec)){
-                if (tableDirec != (const char*) ERROR) {
+                if (tableDirec != (const uTab *)0) {
                     endIn = ((AM_PACKET*) recBuffPtr)->inEp;
                     handler = newHandlerTableEntry(endIn, tableDirec);
                     pUser = getModuleInitDirection(tableDirec);

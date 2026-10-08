@@ -1,89 +1,52 @@
-/* Author               Date        Comment
- *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * Andres Aguirre      09/04/07
- ********************************************************************/
+/* USB4all module registry for XC8. No assumptions about function-pointer size. */
+#include "loaderModule.h"
+#include "module_registry.h"
 
-/** I N C L U D E S **********************************************************/
-#include "system/typedefs.h"                        // Required
-#include "user/defines.h"
-#include "user/loaderModule.h"
+#define MODULE_ADDRESS(name) &name,
+static const uTab * const modules[] = { U4A_MODULES(MODULE_ADDRESS) };
+#undef MODULE_ADDRESS
+#define MODULE_COUNT (sizeof modules / sizeof modules[0])
+typedef char module_count_fits_byte[(MODULE_COUNT < NULLTYPE) ? 1 : -1];
 
-/** V A R I A B L E S ********************************************************/
-
-/** P R I V A T E  P R O T O T Y P E S ***************************************/
-BOOL isEqual(byte str1[8], byte str2[8]);
-
-/** D E C L A R A T I O N S **************************************************/
-
-// No quiero usar strcmp para no incluir string y que consuma mas memoria
-BOOL isEqual(byte str1[8], byte str2[8]){
-    byte j = 0;
-    BOOL result = TRUE, termine = FALSE;
-    for(j = (byte) 0; j < (byte) 8 && !termine; j++){
-        if((str1[j] == (unsigned char)'\0') || (str2[j] == (unsigned char)'\0')){
-            termine = TRUE;
+const uTab *getUserTableDirection(byte moduleId[8])
+{
+    byte i, j;
+    for (i = 0; i < MODULE_COUNT; ++i) {
+        for (j = 0; j < 8; ++j) {
+            if ((byte)moduleId[j] != modules[i]->id[j]) break;
+            if (moduleId[j] == 0) return modules[i];
         }
-        if((char)str1[j] != (char)str2[j]){
-            result = FALSE;
-        }
+        if (j == 8) return modules[i];
     }
-    return result;
+    return (const uTab *)0;
 }
 
-const char* getUserTableDirection(byte moduleId[8]){
-    const char * i = (const char *)DIRECTION_TABLE;
-    const uTab * tabla;
-    byte dest[8];
-    byte j = 0;
-    while (*i != MEM_VACIO){
-        tabla = (const uTab*) i;
-        for (j = (byte) 0; j < (byte) 8; j++){  // hacking para poder comparar strings
-            dest[j] = (tabla->id)[j];  // para poderse comparar ambos strings deben estar en igual espacio de memoria (RAM / ROM)
-        }
-        if (isEqual(dest, moduleId)){
-            return i;
-        }
-        i = i + TAM_U_TAB;
+byte getUserTableSize(void) { return (byte)MODULE_COUNT; }
+
+byte getModuleType(const uTab *direction)
+{
+    byte i;
+    for (i = 0; i < MODULE_COUNT; ++i) {
+        if (direction == modules[i]) return i;
     }
-    return (const char*)ERROR;
+    return NULLTYPE;
 }
 
-byte getUserTableSize(){
-    const char * i = (const char *)DIRECTION_TABLE;
-    byte size = 0;
-    while (*i != MEM_VACIO){
-        i = i + TAM_U_TAB;
-        size++;
-    }
-    return size;
-}
-
-byte getModuleType(const char* uTableDirection){
-    const char * moduleTableInitPos = (const char *)DIRECTION_TABLE;
-    return (uTableDirection-moduleTableInitPos)/TAM_U_TAB;
-}
-
-//Precondicion: Capas superiores se encargan de hacer el chequeo de que no se exceda del espacio de modulos
-void getModuleName(byte line, char* modName){
+void getModuleName(byte line, char *name)
+{
     byte j;
-    const char * i = (const char *)DIRECTION_TABLE;
-    uTab* tabla;
-    i = i + (line * TAM_U_TAB);
-    tabla = (uTab*) i;
-    for (j = (byte) 0; j < (byte) 8; j++){
-        modName[j] = (tabla->id)[j];
-    }
-    //memcpy(modName, tabla->id, 8); no anda, sera porque estan en espacios de memoria separados?(RAM/ROM)
+    for (j = 0; j < 8; ++j)
+        name[j] = line < MODULE_COUNT ? modules[line]->id[j] : 0;
 }
 
-pUserFunc getModuleInitDirection(const char* direction){
-    const uTab* tabla = (const uTab*) direction;
-    return tabla->pfI;
+pUserFunc getModuleInitDirection(const uTab *direction)
+{
+    byte index = getModuleType(direction);
+    return index == NULLTYPE ? (pUserFunc)0 : modules[index]->pfI;
 }
 
-pUserFunc getModuleReleaseDirection(const char* direction){
-    const uTab* tabla = (const uTab*) direction;
-    return tabla->pfR;
+pUserFunc getModuleReleaseDirection(const uTab *direction)
+{
+    byte index = getModuleType(direction);
+    return index == NULLTYPE ? (pUserFunc)0 : modules[index]->pfR;
 }
-
-/** EOF loaderModule.c ***************************************************************/

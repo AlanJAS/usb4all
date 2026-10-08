@@ -102,9 +102,9 @@ byte get_device_type(WORD resistValue) {
 
 void openPnP(byte moduleId[8], byte handler) {
     void (*pUser)(byte);
-    const char* tableDirec;
+    const uTab *tableDirec;
     tableDirec = getUserTableDirection(moduleId);
-    if (tableDirec != (const char*) ERROR) {
+    if (tableDirec != (const uTab *)0) {
         handler = newHandlerTableEntryForcingHandler(pnpEndpoint.endPoint, tableDirec, handler);
         pUser = getModuleInitDirection(tableDirec);
         pUser(handler); //hago el init ;)

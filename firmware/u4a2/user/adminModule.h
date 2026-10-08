@@ -18,7 +18,6 @@
 #include <xc.h>
 #include "usb4all/boot/boot.h"
 #include <string.h>
-#include "system/xc8_eeprom.h"
 #include "usb4all/proxys/T0Service.h"
 #include "user/usb4butia.h" /*Contains Port Descriptions */
 
