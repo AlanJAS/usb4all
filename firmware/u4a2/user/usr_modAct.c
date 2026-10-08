@@ -4,8 +4,7 @@
  *****************************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
-#include <usart.h>
+#include <xc.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 #include "user/usr_modAct.h"
@@ -14,7 +13,6 @@
 #include "user/usb4butia.h"
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 byte* sendBufferUsrModAct; /* buffer to send data*/
 
 #define ACT_ON    (byte) 1
@@ -27,15 +25,12 @@ void UserModActRelease(byte handler);
 
 /* Table used by te framework to get a fixed reference point to the user module functions defined by the framework */
 /** USER MODULE REFERENCE ****************************************************/
-#pragma romdata user
 const uTab userModActATable = {&UserModActInit, &UserModActRelease, "modActA"};
 const uTab userModActBTable = {&UserModActInit, &UserModActRelease, "modActB"};
 const uTab userModActCTable = {&UserModActInit, &UserModActRelease, "modActC"};
 const uTab userRelayModTable = {&UserModActInit, &UserModActRelease, "relay"};
-#pragma code
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code module
 
 /******************************************************************************
  * Function:        UserModActInit(void)
@@ -107,14 +102,14 @@ void UserModActRelease(byte handler) {
 void UserModActReceived(byte* recBuffPtr, byte len, byte handler) {
     byte userModActCounter = 0;
     switch (((MODACT_DATA_PACKET*) recBuffPtr)->CMD) {
-        case READ_VERSION:
+        case U4A_USR_MODACT_READ_VERSION:
             ((MODACT_DATA_PACKET*) sendBufferUsrModAct)->_byte[0] = ((MODACT_DATA_PACKET*) recBuffPtr)->_byte[0];
             ((MODACT_DATA_PACKET*) sendBufferUsrModAct)->_byte[1] = MODACT_MINOR_VERSION;
             ((MODACT_DATA_PACKET*) sendBufferUsrModAct)->_byte[2] = MODACT_MAJOR_VERSION;
             userModActCounter = 0x03;
             break;
 
-        case TURN:
+        case U4A_USR_MODACT_TURN:
             ((MODACT_DATA_PACKET*) sendBufferUsrModAct)->_byte[0] = ((MODACT_DATA_PACKET*) recBuffPtr)->_byte[0];
             if (((MODACT_DATA_PACKET*)recBuffPtr)->_byte[1] == ACT_ON) {
                 getPortDescriptor(handler)->set_data(ACT_ON);
@@ -124,7 +119,7 @@ void UserModActReceived(byte* recBuffPtr, byte len, byte handler) {
             userModActCounter = 0x01;
             break;
 
-        case RESET:
+        case U4A_USR_MODACT_RESET:
             Reset();
             break;
 

@@ -6,7 +6,7 @@
 #ifndef USB4BUTIA_H
 #define USB4BUTIA_H
 
-#include <p18cxxx.h>
+#include <xc.h>
 #include "typedefs.h"
 
 #define MAX_PORTS   (byte) 6

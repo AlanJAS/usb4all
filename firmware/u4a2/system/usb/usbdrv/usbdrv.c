@@ -35,13 +35,12 @@
  ********************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
+#include <xc.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 #include "io_cfg.h"             // Required for USBCheckBusStatus()
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 void USBModuleEnable(void);
@@ -56,7 +55,6 @@ void USBStallHandler(void);
 void USBErrorHandler(void);
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code sys
 /******************************************************************************
  * Function:        void USBCheckBusStatus(void)
  *
@@ -575,14 +573,9 @@ void USBProtocolResetHandler(void)
 /* Auxiliary Function */
 void ClearArray(byte* startAdr,byte count)
 {
-    *startAdr;
-    while(count)
-    {
-        _asm
-        clrf POSTINC0,0
-        _endasm
-        count--;
-    }//end while
+    while (count--) {
+        *startAdr++ = 0;
+    }
 }//end ClearArray
 
 /** EOF usbdrv.c *************************************************************/

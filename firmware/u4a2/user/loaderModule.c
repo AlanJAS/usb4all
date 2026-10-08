@@ -9,13 +9,11 @@
 #include "user/loaderModule.h"
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 BOOL isEqual(byte str1[8], byte str2[8]);
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code sys
 
 // No quiero usar strcmp para no incluir string y que consuma mas memoria
 BOOL isEqual(byte str1[8], byte str2[8]){
@@ -32,8 +30,8 @@ BOOL isEqual(byte str1[8], byte str2[8]){
     return result;
 }
 
-rom near char* getUserTableDirection(byte moduleId[8]){
-    rom near char * i = (rom near char *)DIRECTION_TABLE;
+const char* getUserTableDirection(byte moduleId[8]){
+    const char * i = (const char *)DIRECTION_TABLE;
     const uTab * tabla;
     byte dest[8];
     byte j = 0;
@@ -47,11 +45,11 @@ rom near char* getUserTableDirection(byte moduleId[8]){
         }
         i = i + TAM_U_TAB;
     }
-    return (rom near char*)ERROR;
+    return (const char*)ERROR;
 }
 
 byte getUserTableSize(){
-    rom near char * i = (rom near char *)DIRECTION_TABLE;
+    const char * i = (const char *)DIRECTION_TABLE;
     byte size = 0;
     while (*i != MEM_VACIO){
         i = i + TAM_U_TAB;
@@ -60,15 +58,15 @@ byte getUserTableSize(){
     return size;
 }
 
-byte getModuleType(rom near char* uTableDirection){
-    rom near char * moduleTableInitPos = (rom near char *)DIRECTION_TABLE;
+byte getModuleType(const char* uTableDirection){
+    const char * moduleTableInitPos = (const char *)DIRECTION_TABLE;
     return (uTableDirection-moduleTableInitPos)/TAM_U_TAB;
 }
 
 //Precondicion: Capas superiores se encargan de hacer el chequeo de que no se exceda del espacio de modulos
 void getModuleName(byte line, char* modName){
     byte j;
-    rom near char * i = (rom near char *)DIRECTION_TABLE;
+    const char * i = (const char *)DIRECTION_TABLE;
     uTab* tabla;
     i = i + (line * TAM_U_TAB);
     tabla = (uTab*) i;
@@ -78,12 +76,12 @@ void getModuleName(byte line, char* modName){
     //memcpy(modName, tabla->id, 8); no anda, sera porque estan en espacios de memoria separados?(RAM/ROM)
 }
 
-pUserFunc getModuleInitDirection(rom near char* direction){
+pUserFunc getModuleInitDirection(const char* direction){
     const uTab* tabla = (const uTab*) direction;
     return tabla->pfI;
 }
 
-pUserFunc getModuleReleaseDirection(rom near char* direction){
+pUserFunc getModuleReleaseDirection(const char* direction){
     const uTab* tabla = (const uTab*) direction;
     return tabla->pfR;
 }

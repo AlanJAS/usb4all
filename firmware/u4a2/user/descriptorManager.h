@@ -16,9 +16,9 @@
 typedef union _endpoint{
     byte endPoint;       // Acceso crudo del  byte
     struct {             // Acceso de a bits a cada campo
-        unsigned EPNum:4;
-        unsigned EPDir:1;  // 1 1n 0 0ut
-        unsigned empty:1;  // criptico pero eficiente ;) 1 byte ahorrado es un byte ganado
+        unsigned char EPNum:4;
+        unsigned char EPDir:1;  // 1 1n 0 0ut
+        unsigned char empty:1;  // criptico pero eficiente ;) 1 byte ahorrado es un byte ganado
         enum {
             ISO  = 0x01,
             BULK = 0x02,

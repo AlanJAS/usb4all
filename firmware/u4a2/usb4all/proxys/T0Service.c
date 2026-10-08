@@ -3,7 +3,7 @@
 */
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
+#include <xc.h>
 #include "system/typedefs.h"                        // Required
 #include "system/usb/usb.h"                         // Required
 #include "io_cfg.h"                                 // Required
@@ -15,11 +15,10 @@
 
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 
-#define NULL 0
 
-#define TMR0 (unsigned int)(TMR0L | (unsigned int)(TMR0H)<<8)
+
+#define U4A_TMR0 (unsigned int)(TMR0L | (unsigned int)(TMR0H)<<8)
 
 //This struct contains a registration
 typedef struct  {
@@ -37,7 +36,6 @@ volatile byte next = 0;
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 void interrupt_handler(void);
 
-#pragma code sys
 
 /////////////////////////////////////////////////////////////////
 
@@ -61,7 +59,7 @@ byte is_empty(void) {
 }
 
 //index of the first entry in the queue, or NULL if empty
-Entry *get_first(void) {
+volatile Entry *get_first(void) {
     if (is_empty()) {
         return NULL;
     } else {
@@ -76,9 +74,9 @@ void pop_first(void) {
 
 //Adds a element to the end of the queue, and returns a pointer to it
 //(or NULL, if the queue was full)
-Entry *push_end(void) {
+volatile Entry *push_end(void) {
     byte next1=next_entry(next);
-    Entry *entry=&(queue[next]);
+    volatile Entry *entry=&(queue[next]);
 
     if (next1==first) return NULL; //buffer full
 
@@ -113,7 +111,7 @@ BOOL registerT0event(unsigned int t, void (*callback)(void)) {
     unsigned int currtime;
     byte pos;
     byte prevpos;
-    Entry *entry;
+    volatile Entry *entry;
 
     //stop clock.
     //TODO este servicio atrasa cada vez que se registra o procesa un evento.
@@ -125,8 +123,8 @@ BOOL registerT0event(unsigned int t, void (*callback)(void)) {
         timestamp=t;
     } else {
         //there's someone counting, must count from "now".
-        //(0xFFFF-TMR0) is the remaining time in clock to queue[first] event.
-        currtime  = queue[first].timestamp - (0xFFFF-TMR0);
+        //(0xFFFF-U4A_TMR0) is the remaining time in clock to queue[first] event.
+        currtime  = queue[first].timestamp - (0xFFFF-U4A_TMR0);
         timestamp = currtime + t;
 
         //As we advance the clock marks, we will finally reach the max int. Then we must reduce
@@ -190,7 +188,7 @@ BOOL registerT0eventInEvent(unsigned int t, void (*callback)(void)) {
     unsigned int currtime;
     byte pos;
     byte prevpos;
-    Entry *entry;
+    volatile Entry *entry;
 
     //this is called from an event handler, so the head event is the one being processed,
     //and it timestamp is the current time.
@@ -257,7 +255,7 @@ BOOL unregisterT0event(void (*callback)(void)) {
 
 //interrupt handler to be registered in ISR.
 void interrupt_handler(void) {
-    Entry *e;
+    volatile Entry *e;
     unsigned int currtime;
     unsigned int nexttime;
     void (*callback)(void);

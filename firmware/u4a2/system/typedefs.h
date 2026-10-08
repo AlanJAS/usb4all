@@ -46,14 +46,14 @@ typedef union _BYTE
     byte _byte;
     struct
     {
-        unsigned b0:1;
-        unsigned b1:1;
-        unsigned b2:1;
-        unsigned b3:1;
-        unsigned b4:1;
-        unsigned b5:1;
-        unsigned b6:1;
-        unsigned b7:1;
+        unsigned char b0:1;
+        unsigned char b1:1;
+        unsigned char b2:1;
+        unsigned char b3:1;
+        unsigned char b4:1;
+        unsigned char b5:1;
+        unsigned char b6:1;
+        unsigned char b7:1;
     };
 } BYTE;
 
@@ -139,12 +139,12 @@ typedef union _POINTER
     word* wRam;                         // Ram word poitner: 2 bytes poitner pointing
                                         // to 2 bytes of data
 
-    rom byte* bRom;                     // Size depends on compiler setting
-    rom word* wRom;
-    //rom near byte* nbRom;               // Near = 2 bytes pointer
-    //rom near word* nwRom;
-    //rom far byte* fbRom;                // Far = 3 bytes pointer
-    //rom far word* fwRom;
+    const byte* bRom;                     // Size depends on compiler setting
+    const word* wRom;
+    //const byte* nbRom;               // Near = 2 bytes pointer
+    //const word* nwRom;
+    //const byte* fbRom;                // Far = 3 bytes pointer
+    //const word* fwRom;
 } POINTER;
 
 typedef enum _BOOL { FALSE = 0, TRUE } BOOL;

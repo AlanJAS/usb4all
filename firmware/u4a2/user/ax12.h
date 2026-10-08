@@ -15,7 +15,7 @@
  *           RAM, instrucciones y constantes.
  *
  *         2)La libreria puede ser modificada para ser utilizada por otro
- *           microcontrolador. Se debe modificar "#include <p18f4550.h>" por el
+ *           microcontrolador. Se debe modificar "#include <xc.h>" por el
  *           nuevo HEADER. NOTA: El cambio de microcontrolador puede implicar
  *           modificaciones en funciones utilizadas en esta libreria.
  *
@@ -34,8 +34,8 @@
  ******************************************************************************/
 
 /* Includes */
-#include <p18f4550.h>
-#include "../typedefs.h"
+#include <xc.h>
+#include "system/typedefs.h"
 
 /*****************************************************************************/
 /**************************    Tabla de direcciones   ************************/

@@ -19,35 +19,37 @@
 #define AX_MAJOR_VERSION   0x00
 
 /** S T R U C T U R E S ******************************************************/
+enum {
+U4A_USR_AX_READ_VERSION = 0x00,
+            U4A_USR_AX_WRITE_INFO = 0x01,
+            U4A_USR_AX_READ_INFO = 0x02,
+            U4A_USR_AX_SEND_RAW = 0x03,
+            U4A_USR_AX_RESET = 0xFF
+};
+
 typedef union AX_DATA_PACKET {
     byte _byte[USBGEN_EP_SIZE];
     word _word[USBGEN_EP_SIZE / 2];
 
     struct {
 
-        enum {
-            READ_VERSION = 0x00,
-            WRITE_INFO = 0x01,
-            READ_INFO = 0x02,
-            SEND_RAW = 0x03,
-            RESET = 0xFF
-        } CMD;
+        byte CMD;
         byte len;
     };
 
     struct {
-        unsigned : 8;
+        unsigned char : 8;
         byte id;
     };
 
     struct {
-        unsigned : 8;
+        unsigned char : 8;
         byte ax12_num;
         byte ax12_status;
     };
 
     struct {
-        unsigned : 8;
+        unsigned char : 8;
         word word_data;
     };
 } AX_DATA_PACKET;

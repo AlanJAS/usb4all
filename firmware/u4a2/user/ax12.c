@@ -16,7 +16,7 @@
  *           nuestra USART.
  *
  *         3)este codigo puede ser modificado para ser utilizado por otro
- *           microcontrolador. Se debe modificar "#include <p18f4550.h>" por el
+ *           microcontrolador. Se debe modificar "#include <xc.h>" por el
  *           nuevo HEADER. NOTA: El cambio de microcontrolador puede implicar
  *           modificaciones en funciones utilizadas en esta libreria.
  *
@@ -31,14 +31,14 @@
  ******************************************************************************/
 
 /* Includes */
-#include "p18f4550.h"
+#include <xc.h>
 #include "ax12.h"
+#include <stdlib.h>
 
 #define FF 0xFF
 #define MAX_MOTOR_ID 0xFE
 #define TIMEOUT 15000
 
-#pragma udata
 
 /*****************************************************************************/
 /********************************   Variables   ******************************/
@@ -59,7 +59,6 @@ byte ax12writeB(byte);
 byte readSerial(void);
 int makeInt(byte, byte);
 
-#pragma code module
 
 //boolean sign2bin (int numero) {                        // numero > 0 --> true
 //    return (numero > 0);                               //numero <= 0 --> false
@@ -99,7 +98,6 @@ byte highByte(int value){
 /*****************************************************************************/
 /*************************    Vector de Interrupcion   ***********************/
 /***************************************************************************** *
-#pragma code vector =  0x08
 
 void int_vector (void){
     _asm
@@ -107,7 +105,6 @@ void int_vector (void){
     _endasm
 }
 
-#pragma code
 
 /*****************************************************************************/
 /*************************    Rutina de Interrupcion   ***********************/

@@ -4,9 +4,7 @@
  *****************************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
-#include <usart.h>
-#include <delays.h>
+#include <xc.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 #include "user/port.h"
@@ -14,7 +12,6 @@
 #include "user/handlerManager.h"
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 byte* sendBufferPort; // buffer to send data
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
@@ -24,12 +21,9 @@ void PortRelease(byte i);
 
 // Table used by te framework to get a fixed reference point to the user module functions defined by the framework
 /** USER MODULE REFERENCE*****************************************************/
-#pragma romdata user
 const uTab PortModuleTable = {&PortInit, &PortRelease, "port"};
-#pragma code
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code module
 
 /******************************************************************************
  * Function:        UseTestResInit(void)
@@ -100,7 +94,7 @@ void PortReceived(byte* recBuffPtr, byte len, byte handler) {
     byte PortCounter = 0;
 
     switch (((PORT_DATA_PACKET*) recBuffPtr)->CMD) {
-        case READ_VERSION:
+        case U4A_PORT_READ_VERSION:
             //dataPacket._byte[1] is len
             ((PORT_DATA_PACKET*) sendBufferPort)->_byte[0] = ((PORT_DATA_PACKET*) recBuffPtr)->_byte[0];
             ((PORT_DATA_PACKET*) sendBufferPort)->_byte[1] = PORT_MINOR_VERSION;
@@ -108,7 +102,7 @@ void PortReceived(byte* recBuffPtr, byte len, byte handler) {
             PortCounter = 0x03;
             break;
 
-        case GET_RES:
+        case U4A_PORT_GET_RES:
             ((PORT_DATA_PACKET*) sendBufferPort)->_byte[0] = ((PORT_DATA_PACKET*) recBuffPtr)->_byte[0];
             ((PORT_DATA_PACKET*) sendBufferPort)->_byte[1] = 255;
             PortCounter = 0x02;

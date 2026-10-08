@@ -15,10 +15,10 @@
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 #include "io_cfg.h"
-#include <p18cxxx.h>
+#include <xc.h>
 #include "usb4all/boot/boot.h"
 #include <string.h>
-#include <EEP.h>
+#include "system/xc8_eeprom.h"
 #include "usb4all/proxys/T0Service.h"
 #include "user/usb4butia.h" /*Contains Port Descriptions */
 
@@ -34,101 +34,94 @@
 
 /** S T R U C T U R E S ******************************************************/
 
+enum {
+U4A_ADMINMODULE_OPEN = 0x00,
+            U4A_ADMINMODULE_CLOSE = 0x01,
+            U4A_ADMINMODULE_MESSAGE = 0x02,
+            U4A_ADMINMODULE_LOAD = 0x03,
+            U4A_ADMINMODULE_UNLOAD = 0x04,
+            U4A_ADMINMODULE_GET_USER_MODULES_SIZE = 0x05,
+            U4A_ADMINMODULE_GET_USER_MODULES_LINE = 0x06,
+            U4A_ADMINMODULE_INIT = 0x07,
+            U4A_ADMINMODULE_CONFIGURE = 0x08,
+            U4A_ADMINMODULE_BOOT = 0x09,
+            U4A_ADMINMODULE_GET_HANDLER_SIZE = 0x0A,
+            U4A_ADMINMODULE_GET_HANDLER_TYPE = 0x0B,
+            U4A_ADMINMODULE_GET_FIRMWARE_VERSION = 0xFE,
+            U4A_ADMINMODULE_RESET = 0xFF
+};
+
 typedef union _AM_PACKET {
     byte _byte[HM_PACKET_SIZE];
 
     struct {
 
-        enum {
-            OPEN = 0x00,
-            CLOSE = 0x01,
-            MESSAGE = 0x02,
-            LOAD = 0x03,
-            UNLOAD = 0x04,
-            GET_USER_MODULES_SIZE = 0x05,
-            GET_USER_MODULES_LINE = 0x06,
-            INIT = 0x07,
-            CONFIGURE = 0x08,
-            BOOT = 0x09,
-            GET_HANDLER_SIZE = 0x0A,
-            GET_HANDLER_TYPE = 0x0B,
-            GET_FIRMWARE_VERSION = 0xFE,
-            RESET = 0xFF
-        } CMD;
+        byte CMD;
         byte payload[HM_PACKET_PAYLOAD_SIZE];
     };
 
     struct { //Open, PC->PLACA
-        unsigned : 8;
+        unsigned char : 8;
         byte inEp;
         byte outEp;
         byte moduleId[8];
     };
 
     struct { //Open, PLACA->PC
-        unsigned : 8;
+        unsigned char : 8;
         byte handlerNumber;
         //byte epNumber; no devuelvo mas el endpoint, se administra en la pc
     };
 
-    struct { //Close, PC->PLACA
-        unsigned : 8;
-        byte handlerNumber;
-    };
+
 
     struct { //Close, PLACA->PC
-        unsigned : 8;
-        respType response; //respType en defines.h
+        unsigned char : 8;
+        byte response; //respType en defines.h
     };
 
     struct { //Message, PLACA->PC y MODULO_USUARIO->ADMIN?
-        unsigned : 8;
+        unsigned char : 8;
         char texto[HM_PACKET_SIZE - HM_PACKET_HEADER_SIZE];
     };
 
-    struct { //GET_USER_MODULES_SIZE, PC->PLACA
-        unsigned : 8;
+    struct { //U4A_ADMINMODULE_GET_USER_MODULES_SIZE, PC->PLACA
+        unsigned char : 8;
     };
 
-    struct { //GET_USER_MODULES_SIZE, PLACA->PC
-        unsigned : 8;
+    struct { //U4A_ADMINMODULE_GET_USER_MODULES_SIZE, PLACA->PC
+        unsigned char : 8;
         byte size;
     };
 
-    struct { //GET_USER_MODULES_LINE, PC->PLACA
-        unsigned : 8;
+    struct { //U4A_ADMINMODULE_GET_USER_MODULES_LINE, PC->PLACA
+        unsigned char : 8;
         byte line;
     };
 
-    struct { //GET_USER_MODULES_LINE, PLACA->PC
-        unsigned : 8;
+    struct { //U4A_ADMINMODULE_GET_USER_MODULES_LINE, PLACA->PC
+        unsigned char : 8;
         char lineName[8];
     };
 
-    struct { //INIT, PLACA->PC
-        unsigned : 8;
+    struct { //U4A_ADMINMODULE_INIT, PLACA->PC
+        unsigned char : 8;
     };
 
-    struct { //INIT, PLACA->PC
-        unsigned : 8;
+    struct { //U4A_ADMINMODULE_INIT, PLACA->PC
+        unsigned char : 8;
     };
 
-    struct { //GET_HANDLER_SIZE, PC->PLACA
-        unsigned : 8;
+    struct { //U4A_ADMINMODULE_GET_HANDLER_SIZE, PC->PLACA
+        unsigned char : 8;
     };
 
-    struct { //GET_HANDLER_SIZE, PLACA->PC
-        unsigned : 8;
-        byte size;
-    };
 
-    struct { //GET_HANDLER_TYPE, PC->PLACA
-        unsigned : 8;
-        byte handlerNumber;
-    };
 
-    struct { //GET_HANDLER_TYPE, PLACA->PC
-        unsigned : 8;
+
+
+    struct { //U4A_ADMINMODULE_GET_HANDLER_TYPE, PLACA->PC
+        unsigned char : 8;
         byte type;
     };
 } AM_PACKET;

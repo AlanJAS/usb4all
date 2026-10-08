@@ -3,10 +3,9 @@
 #include "loaderModule.h"
 #include "user/usr_motors.h"
 
-#pragma code sys
 
 /** VARIABLES INITIALIZED, CONST ROM **/
-rom const device_resistance table_device_id_resistance[MAX_DEVICES] = {
+const device_resistance table_device_id_resistance[MAX_DEVICES] = {
     { "port", R_PORT_MIN, R_PORT_MAX},
     { "light", R_LIGHT_MIN, R_LIGHT_MAX},
     { "button", R_BOTON_MIN, R_BOTON_MAX},
@@ -24,7 +23,6 @@ rom const device_resistance table_device_id_resistance[MAX_DEVICES] = {
 };
 
 /** VARIABLES UNINITIALIZED, RAM **/
-#pragma udata
 byte PNPHandler = 0;
 byte* sendBufferPNP; // buffer to send data
 byte detected_device_type_id[MAX_PORTS]; /*the device_type_id of the device connected*/
@@ -38,12 +36,9 @@ void PNPRelease(byte i);
 
 // Table used by te framework to get a fixed reference point to the user module functions defined by the framework
 /** USER MODULE REFERENCE*****************************************************/
-#pragma romdata user
 const uTab PNPModuleTable = {&PNPInit, &PNPRelease, "pnp"};
-#pragma code
 
 /* CODE */
-#pragma code module
 
 void initTableDetectedDevice(void) {
     byte aux;
@@ -107,9 +102,9 @@ byte get_device_type(WORD resistValue) {
 
 void openPnP(byte moduleId[8], byte handler) {
     void (*pUser)(byte);
-    rom near char* tableDirec;
+    const char* tableDirec;
     tableDirec = getUserTableDirection(moduleId);
-    if (tableDirec != (rom near char*) ERROR) {
+    if (tableDirec != (const char*) ERROR) {
         handler = newHandlerTableEntryForcingHandler(pnpEndpoint.endPoint, tableDirec, handler);
         pUser = getModuleInitDirection(tableDirec);
         pUser(handler); //hago el init ;)
@@ -151,7 +146,7 @@ void PNPReceived(byte* recBuffPtr, byte len, byte handler) {
     byte userPNPCounter = 0;
 
     switch (((PNP_DATA_PACKET*) recBuffPtr)->CMD) {
-        case READ_VERSION:
+        case U4A_PNP_READ_VERSION:
             ((PNP_DATA_PACKET*) sendBufferPNP)->_byte[0] = ((PNP_DATA_PACKET*) recBuffPtr)->_byte[0];
             ((PNP_DATA_PACKET*) sendBufferPNP)->_byte[1] = PNP_MINOR_VERSION;
             ((PNP_DATA_PACKET*) sendBufferPNP)->_byte[2] = PNP_MAJOR_VERSION;

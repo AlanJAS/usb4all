@@ -6,9 +6,8 @@
  ********************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
+#include <xc.h>
 #include "pnp.h"
-#include <usart.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 #include "user/defines.h"
@@ -18,7 +17,6 @@
 #include "usr_motors.h"
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 unsigned char ram_max_ep_number;
 epHandlerMapItem epHandlerMap[MAX_HANDLERS];
 HM_DATA_PACKET_HEADER hmDataPacketHeader;
@@ -29,8 +27,6 @@ HANDLER_OPTYPE hn_opType;
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code
-#pragma code module
 
 void setHandlerReceiveBuffer(byte handler, byte *rb){
     HandlerReceiveBuffer[handler] = rb;
@@ -119,7 +115,7 @@ void USBGenWrite2(byte handler, byte len) {
 
 }//end USBGenWrite
 
-byte newHandlerTableEntry(byte endPIn, rom near char* uTableDirection){
+byte newHandlerTableEntry(byte endPIn, const char* uTableDirection){
     byte i = 0;
     while (i < MAX_HANDLERS){
         if (epHandlerMap[i].ep.empty == (unsigned) 1) {
@@ -133,7 +129,7 @@ byte newHandlerTableEntry(byte endPIn, rom near char* uTableDirection){
     return ERROR;
 }
 
-byte newHandlerTableEntryForcingHandler(byte endPIn, rom near char* uTableDirection, byte handler){
+byte newHandlerTableEntryForcingHandler(byte endPIn, const char* uTableDirection, byte handler){
     if (epHandlerMap[handler].ep.empty == (unsigned) 1) {
         epHandlerMap[handler].ep.endPoint = endPIn;
         epHandlerMap[handler].ep.empty = 0;
@@ -144,7 +140,7 @@ byte newHandlerTableEntryForcingHandler(byte endPIn, rom near char* uTableDirect
     }
 }
 
-BOOL existsTableEntry(rom near char* uTableDirection){
+BOOL existsTableEntry(const char* uTableDirection){
     byte i=0;
     while (i<MAX_HANDLERS){
         if (epHandlerMap[i].uTableDirection == uTableDirection) {
@@ -155,7 +151,7 @@ BOOL existsTableEntry(rom near char* uTableDirection){
     return FALSE;
 }
 
-byte handlerFromTableEntry(rom near char* uTableDirection){
+byte handlerFromTableEntry(const char* uTableDirection){
     byte i = 0;
     while (i < MAX_HANDLERS){
         if (epHandlerMap[i].uTableDirection == uTableDirection) {

@@ -16,34 +16,35 @@
 #define BUTIA_VERSION 0x17 //22
 
 /** S T R U C T U R E S ******************************************************/
+enum {
+U4A_USR_BUTIA_READ_VERSION_BUTIA = 0x02,
+            U4A_USR_BUTIA_GET_VOLT     = 0x03,
+            U4A_USR_BUTIA_RESET	 = 0xFF
+};
+
 typedef union BUTIA_DATA_PACKET
 {
     byte _byte[USBGEN_EP_SIZE];  /*For byte access*/
     word _word[USBGEN_EP_SIZE/2];/*For word access(USBGEN_EP_SIZE msut be even)*/
     struct
     {
-        enum
-        {
-            READ_VERSION_BUTIA = 0x02,
-            GET_VOLT     = 0x03,
-            RESET	 = 0xFF
-        }CMD;
+        byte CMD;
         byte len;
     };
     struct
     {
-        unsigned :8;
+        unsigned char :8;
         byte ID;
     };
     struct
     {
-        unsigned :8;
+        unsigned char :8;
         byte led_num;
         byte led_status;
     };
     struct
     {
-        unsigned :8;
+        unsigned char :8;
         word word_data;
     };
 } BUTIA_DATA_PACKET;

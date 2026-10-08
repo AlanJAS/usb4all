@@ -19,7 +19,7 @@
 
 typedef void(*pUserFunc)(byte);  // defino el tipo que representa las funciones init del usuario
 
-typedef rom struct uTab{         // struct para mapear en rom los datos que identifican a las funciones init del usuario
+typedef const struct uTab{         // struct para mapear en const los datos que identifican a las funciones init del usuario
 	pUserFunc pfI;				// puntero a la funcion Init del usuario
 	pUserFunc pfR;				// puntero a la funcion Release del usuario
 	byte id[8];				// identificador del modulo usuario
@@ -31,10 +31,10 @@ typedef rom struct uTab{         // struct para mapear en rom los datos que iden
 // Para cargar el modulo se le pasa el binaryStream que es el .hex a cargar
 // y un identificador de modulo
 //void loadModule(byte idModule, byte* binaryStream);
-rom near char* getUserTableDirection(byte moduleId[8]);
+const char* getUserTableDirection(byte moduleId[8]);
 byte getUserTableSize(void);
 void getModuleName(byte line, char* modName);
-pUserFunc getModuleInitDirection(rom near char* direction);
-pUserFunc getModuleReleaseDirection(rom near char* direction);
-byte getModuleType(rom near char* uTableDirection);
+pUserFunc getModuleInitDirection(const char* direction);
+pUserFunc getModuleReleaseDirection(const char* direction);
+byte getModuleType(const char* uTableDirection);
 #endif //LOADER_MODULE_H

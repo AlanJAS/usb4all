@@ -4,9 +4,7 @@
  *****************************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
-#include <usart.h>
-#include <delays.h>
+#include <xc.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 #include "user/usr_hackpoints.h"
@@ -15,7 +13,6 @@
 
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 byte* sendBufferHackPoints; /* buffer to send data*/
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
@@ -26,12 +23,9 @@ void HackPointsRelease(byte handler);
 /* Table used by te framework to get a fixed reference point
  * to the user module functions defined by the framework
 /** USER MODULE REFERENCE*****************************************************/
-#pragma romdata user
 const uTab HackPointsModuleTable = {&HackPointsInit, &HackPointsRelease, "hackp"};
-#pragma code
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code module
 
 /******************************************************************************
  * Function:        UseTestResInit(void)
@@ -107,14 +101,14 @@ void HackPointsReceived(byte* recBufferHackPoints, byte len, byte handler) {
     byte pin;
 
     switch (((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->CMD) {
-        case READ_VERSION:
+        case U4A_USR_HACKPOINTS_READ_VERSION:
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[1] = HACK_POINTS_MINOR_VERSION;
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[2] = HACK_POINTS_MAJOR_VERSION;
             HackPointsCounter = 0x03;
             break;
 
-        case SET_MODE:
+        case U4A_USR_HACKPOINTS_SET_MODE:
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             pin = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[1];
             if (((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[2] == (byte) 0){
@@ -127,7 +121,7 @@ void HackPointsReceived(byte* recBufferHackPoints, byte len, byte handler) {
             HackPointsCounter = 0x01;
             break;
 
-        case WRITE:
+        case U4A_USR_HACKPOINTS_WRITE:
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             pin = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[1];
             if (((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[2] == (byte) 1){
@@ -138,28 +132,28 @@ void HackPointsReceived(byte* recBufferHackPoints, byte len, byte handler) {
             HackPointsCounter = 0x01;
             break;
 
-        case SET_PORT:
+        case U4A_USR_HACKPOINTS_SET_PORT:
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             PORTD = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[1];
             TRISD = OUTPUT;
             HackPointsCounter = 0x01;
             break;
 
-        case SET_PORT_IN:
+        case U4A_USR_HACKPOINTS_SET_PORT_IN:
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             PORTD = ZERO;
             TRISD = INPUT;
             HackPointsCounter = 0x01;
             break;
 
-        case SET_PORT_OUT:
+        case U4A_USR_HACKPOINTS_SET_PORT_OUT:
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             PORTD = ZERO;
             TRISD = OUTPUT;
             HackPointsCounter = 0x01;
             break;
 
-        case READ:
+        case U4A_USR_HACKPOINTS_READ:
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             pin = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[1];
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[1] = (PORTD & (MASK<<pin))>>pin;

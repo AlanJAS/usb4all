@@ -4,8 +4,7 @@
  *****************************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
-#include <usart.h>
+#include <xc.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 #include "user/usr_modSen.h"
@@ -14,7 +13,6 @@
 #include "user/usb4butia.h"
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 
 byte* sendBufferUsrModSen; /* buffer to send data*/
 
@@ -25,7 +23,6 @@ void UserModSenRelease(byte handler);
 
 /* Table used by te framework to get a fixed reference point to the user module functions defined by the framework */
 /** USER MODULE REFERENCE ****************************************************/
-#pragma romdata user
 const uTab userModSenATable = {&UserModSenInit, &UserModSenRelease, "modSenA"};
 const uTab userModSenBTable = {&UserModSenInit, &UserModSenRelease, "modSenB"};
 const uTab userModSenCTable = {&UserModSenInit, &UserModSenRelease, "modSenC"};
@@ -35,10 +32,8 @@ const uTab userResModuleTable = {&UserModSenInit, &UserModSenRelease, "res"};
 const uTab userVoltModuleTable = {&UserModSenInit, &UserModSenRelease, "volt"};
 const uTab userDistModuleTable = {&UserModSenInit, &UserModSenRelease, "distanc"};
 
-#pragma code
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code module
 
 /******************************************************************************
  * Function:        UserModSenInit(void)
@@ -109,14 +104,14 @@ void UserModSenReceived(byte* recBuffPtr, byte len, byte handler) {
     WORD data;
     byte userModSenCounter = 0;
     switch (((MODSEN_DATA_PACKET*) recBuffPtr)->CMD) {
-        case READ_VERSION:
+        case U4A_USR_MODSEN_READ_VERSION:
             ((MODSEN_DATA_PACKET*) sendBufferUsrModSen)->_byte[0] = ((MODSEN_DATA_PACKET*) recBuffPtr)->_byte[0];
             ((MODSEN_DATA_PACKET*) sendBufferUsrModSen)->_byte[1] = MODSEN_MINOR_VERSION;
             ((MODSEN_DATA_PACKET*) sendBufferUsrModSen)->_byte[2] = MODSEN_MAJOR_VERSION;
             userModSenCounter = 0x03;
             break;
 
-        case GET_VALUE:
+        case U4A_USR_MODSEN_GET_VALUE:
             ((MODSEN_DATA_PACKET*) sendBufferUsrModSen)->_byte[0] = ((MODSEN_DATA_PACKET*) recBuffPtr)->_byte[0];
             data = getPortDescriptor(handler)->get_data_analog();
             ((MODSEN_DATA_PACKET*) sendBufferUsrModSen)->_byte[1] = LSB(data);
@@ -124,7 +119,7 @@ void UserModSenReceived(byte* recBuffPtr, byte len, byte handler) {
             userModSenCounter = 0x03;
             break;
 
-        case RESET:
+        case U4A_USR_MODSEN_RESET:
             Reset();
             break;
 

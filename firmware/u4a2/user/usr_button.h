@@ -14,34 +14,35 @@
 #define BUTTON_MAJOR_VERSION    0x00
 
 /** S T R U C T U R E S ******************************************************/
+enum {
+U4A_USR_BUTTON_READ_VERSION = 0x00,
+            U4A_USR_BUTTON_GET_VALUE    = 0x01,
+            U4A_USR_BUTTON_RESET        = 0xFF  /*backward compatibility*/
+};
+
 typedef union BUTTON_DATA_PACKET
 {
     byte _byte[USBGEN_EP_SIZE];  /*For byte access*/
     word _word[USBGEN_EP_SIZE/2];/*For word access(USBGEN_EP_SIZE msut be even)*/
     struct
     {
-        enum
-        {
-            READ_VERSION = 0x00,
-            GET_VALUE    = 0x01,
-            RESET        = 0xFF  /*backward compatibility*/
-        }CMD;
+        byte CMD;
         byte len;
     };
     struct
     {
-        unsigned :8;
+        unsigned char :8;
         byte ID;
     };
     struct
     {
-        unsigned :8;
+        unsigned char :8;
         byte button_num;
         byte button_status;
     };
     struct
     {
-        unsigned :8;
+        unsigned char :8;
         word word_data;
     };
 } BUTTON_DATA_PACKET;

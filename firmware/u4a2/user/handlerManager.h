@@ -25,7 +25,7 @@ typedef struct _epHandlerMapItem{
 	endpoint ep;
 	// Se necesita para tener una forma
 	// de determinar si un modulo ya esta abierto, y para que el close obtenga el ptero a la fs close del usuario
-	rom near char* uTableDirection;
+	const char* uTableDirection;
 } epHandlerMapItem;
 
 typedef union _HM_DATA_PACKET_HEADER {
@@ -35,18 +35,18 @@ typedef union _HM_DATA_PACKET_HEADER {
 		byte pLength_ReservedL;
 	};
 	struct {
-		unsigned operationType:3;
-		unsigned handlerNumber:5;
-		unsigned pLength:8;
-		unsigned reserved:8;
+		unsigned char operationType:3;
+		unsigned char handlerNumber:5;
+		unsigned char pLength:8;
+		unsigned char reserved:8;
 	};
 } HM_DATA_PACKET_HEADER;
 
 typedef union _HANDLER_OPTYPE {
 	byte hn_op;
 	struct {
-		unsigned operationType:3;
-		unsigned handlerNumber:5;
+		unsigned char operationType:3;
+		unsigned char handlerNumber:5;
 	};
 } HANDLER_OPTYPE;
 
@@ -68,10 +68,10 @@ void USBGenWrite2(byte handler, byte len);
 void initHandlerBuffers(void);
 void setHandlerReceiveBuffer(byte handler, byte *rb);
 void setHandlerReceiveFunction(byte handler,void (*pf) (byte* recBuffPtr,byte, byte));
-byte newHandlerTableEntry(byte endPIn, rom near char* uTableDirection);
-byte newHandlerTableEntryForcingHandler(byte endPIn, rom near char* uTableDirection, byte handler);
-BOOL existsTableEntry(rom near char* uTableDirection);
-byte handlerFromTableEntry(rom near char* uTableDirection);
+byte newHandlerTableEntry(byte endPIn, const char* uTableDirection);
+byte newHandlerTableEntryForcingHandler(byte endPIn, const char* uTableDirection, byte handler);
+BOOL existsTableEntry(const char* uTableDirection);
+byte handlerFromTableEntry(const char* uTableDirection);
 void initHandlerTable();
 void initHandlerManager(void);
 respType removeHandlerTableEntry(byte handler);

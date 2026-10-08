@@ -30,6 +30,14 @@
 #define MASK_SHIELD (byte) 0x07
 #define SHIELD_CC   (byte) 0x04
 
+enum {
+U4A_USR_MOTORS_READ_VERSION = 0x00,
+            U4A_USR_MOTORS_SET_VEL_2MTR = 0x01,
+            U4A_USR_MOTORS_SET_VEL_MTR = 0x02,
+            U4A_USR_MOTORS_TEST_MOTORS = 0x03,
+            U4A_USR_MOTORS_GET_TYPE = 0x04
+};
+
 typedef void (*fGetVolt)(int *);
 typedef void (*fMoveMotor)(unsigned int, byte);
 
@@ -40,29 +48,23 @@ typedef union MOTORS_DATA_PACKET {
 
     struct {
 
-        enum {
-            READ_VERSION = 0x00,
-            SET_VEL_2MTR = 0x01,
-            SET_VEL_MTR = 0x02,
-            TEST_MOTORS = 0x03,
-            GET_TYPE = 0x04            
-        } CMD;
+        byte CMD;
         byte len;
     };
 
     struct {
-        unsigned : 8;
+        unsigned char : 8;
         byte id;
     };
 
     struct {
-        unsigned : 8;
+        unsigned char : 8;
         byte motors_num;
         byte motors_status;
     };
 
     struct {
-        unsigned : 8;
+        unsigned char : 8;
         word word_data;
     };
 } MOTORS_DATA_PACKET;

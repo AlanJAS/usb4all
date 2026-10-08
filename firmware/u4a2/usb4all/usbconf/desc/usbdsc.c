@@ -2,10 +2,9 @@
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 /** C O N S T A N T S ************************************************/
-#pragma romdata _device_dsc
 
 //	 Device Descriptor
-rom USB_DEV_DSC device_dsc=
+const USB_DEV_DSC device_dsc=
 {
     sizeof(USB_DEV_DSC),    // Size of this descriptor in bytes
     DSC_DEV,                // DEVICE descriptor type
@@ -23,7 +22,7 @@ rom USB_DEV_DSC device_dsc=
     0x1,				// Number of possible configurations
 };
 //		 Configuration 1 Descriptor
-CFG01=
+const CFG01 cfg01=
 {
     // Configuration Descriptor
     sizeof(USB_CFG_DSC),    // Size of this descriptor in bytes
@@ -52,17 +51,14 @@ sizeof(USB_EP_DSC),DSC_EP,_EP01_IN,_BULK,USBGEN_EP_SIZE,255};
 //sizeof(USB_EP_DSC),DSC_EP,_EP02_IN,_BULK,USBGEN_EP_SIZE,255,
 //sizeof(USB_EP_DSC),DSC_EP,_EP03_OUT,_ISO,USBGEN_EP_SIZE,6,
 //sizeof(USB_EP_DSC),DSC_EP,_EP03_IN,_ISO,USBGEN_EP_SIZE,6};
-rom struct{byte bLength;byte bDscType;word string[1];}sd000={
+const struct{byte bLength;byte bDscType;word string[1];}sd000={
 sizeof(sd000),DSC_STR,0x409};
-rom struct{byte bLength;byte bDscType;word string[36];}sd001={
+const struct{byte bLength;byte bDscType;word string[36];}sd001={
 sizeof(sd001),DSC_STR,'w','w','w','.','f','i','n','g','.','e','d','u','.','u','y','/','i','n','c','o','/','p','r','o','y','e','c','t','o','s','/','b','u','t','i','a'};
-rom struct{byte bLength;byte bDscType;word string[26];}sd002={
+const struct{byte bLength;byte bDscType;word string[26];}sd002={
 sizeof(sd002),DSC_STR,'U','S','B','4','B','u','t','i','a',' ','2','0','1','1',' ','F','I','N','G',' ','U','d','e','l','a','R'};
-rom struct{byte bLength;byte bDscType;word string[8];}sd003={
+const struct{byte bLength;byte bDscType;word string[8];}sd003={
 sizeof(sd003),DSC_STR,'0','0','0','0','0','0','0','2'};
 //dejo estos punteros en una posicion fija de memoria
-#pragma romdata _usb_cd_ptr
-rom const unsigned char *rom USB_CD_Ptr[]={(rom char*)&cfg01,(rom char*)&cfg01};
-#pragma romdata _usb_sd_ptr
-rom const unsigned char *rom USB_SD_Ptr[]={(rom char*)&sd000,(rom char*)&sd001,(rom char*)&sd002,(rom char*)&sd003};
-#pragma code sys
+const unsigned char *const USB_CD_Ptr[]={(const unsigned char*)&cfg01,(const unsigned char*)&cfg01};
+const unsigned char *const USB_SD_Ptr[]={(const unsigned char*)&sd000,(const unsigned char*)&sd001,(const unsigned char*)&sd002,(const unsigned char*)&sd003};

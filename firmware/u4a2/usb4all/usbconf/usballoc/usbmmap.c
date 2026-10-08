@@ -5,7 +5,6 @@
 #include "system/usb/usb.h"
 #include "usb4all/boot/boot.h" //mia
 // U S B  G L O B A L  V A R I A B L E S ***********************************
-#pragma udata
 byte usb_device_state;          // Device States: DETACHED, ATTACHED, ...
 USB_DEVICE_STATUS usb_stat;     // Global USB flags
 byte usb_active_cfg;            // Value of current configuration
@@ -17,102 +16,98 @@ byte usb_alt_intf[MAX_NUM_INT]; // Array to keep track of the current alternate
 
 // U S B  F I X E D  L O C A T I O N  V A R I A B L E S ********************
 
-#pragma udata usbram4=0x400     //See Linker Script,usb4:0x400-0x4FF(256-byte)
 // Section A: Buffer Descriptor Table
 #if(0 <= MAX_EP_NUMBER)
-volatile far BDT ep0Bo;
-volatile far BDT ep0Bi;
+volatile BDT ep0Bo;
+volatile BDT ep0Bi;
 #endif
 
 #if(1 <= MAX_EP_NUMBER)
-volatile far BDT ep1Bo;
-volatile far BDT ep1Bi;
+volatile BDT ep1Bo;
+volatile BDT ep1Bi;
 #endif
 
 #if(2 <= MAX_EP_NUMBER)
-volatile far BDT ep2Bo;
-volatile far BDT ep2Bi;
+volatile BDT ep2Bo;
+volatile BDT ep2Bi;
 #endif
 
 #if(3 <= MAX_EP_NUMBER)
-volatile far BDT ep3Bo;
-volatile far BDT ep3Bi;
+volatile BDT ep3Bo;
+volatile BDT ep3Bi;
 #endif
 
 #if(4 <= MAX_EP_NUMBER)
-volatile far BDT ep4Bo;
-volatile far BDT ep4Bi;
+volatile BDT ep4Bo;
+volatile BDT ep4Bi;
 #endif
 
 #if(5 <= MAX_EP_NUMBER)
-volatile far BDT ep5Bo;
-volatile far BDT ep5Bi;
+volatile BDT ep5Bo;
+volatile BDT ep5Bi;
 #endif
 
 #if(6 <= MAX_EP_NUMBER)
-volatile far BDT ep6Bo;
-volatile far BDT ep6Bi;
+volatile BDT ep6Bo;
+volatile BDT ep6Bi;
 #endif
 
 #if(7 <= MAX_EP_NUMBER)
-volatile far BDT ep7Bo;
-volatile far BDT ep7Bi;
+volatile BDT ep7Bo;
+volatile BDT ep7Bi;
 #endif
 
 #if(8 <= MAX_EP_NUMBER)
-volatile far BDT ep8Bo;
-volatile far BDT ep8Bi;
+volatile BDT ep8Bo;
+volatile BDT ep8Bi;
 #endif
 
 #if(9 <= MAX_EP_NUMBER)
-volatile far BDT ep9Bo;
-volatile far BDT ep9Bi;
+volatile BDT ep9Bo;
+volatile BDT ep9Bi;
 #endif
 
 #if(10 <= MAX_EP_NUMBER)
-volatile far BDT ep10Bo;
-volatile far BDT ep10Bi;
+volatile BDT ep10Bo;
+volatile BDT ep10Bi;
 #endif
 
 #if(11 <= MAX_EP_NUMBER)
-volatile far BDT ep11Bo;
-volatile far BDT ep11Bi;
+volatile BDT ep11Bo;
+volatile BDT ep11Bi;
 #endif
 
 #if(12 <= MAX_EP_NUMBER)
-volatile far BDT ep12Bo;
-volatile far BDT ep12Bi;
+volatile BDT ep12Bo;
+volatile BDT ep12Bi;
 #endif
 
 #if(13 <= MAX_EP_NUMBER)
-volatile far BDT ep13Bo;
-volatile far BDT ep13Bi;
+volatile BDT ep13Bo;
+volatile BDT ep13Bi;
 #endif
 
 #if(14 <= MAX_EP_NUMBER)
-volatile far BDT ep14Bo;
-volatile far BDT ep14Bi;
+volatile BDT ep14Bo;
+volatile BDT ep14Bi;
 #endif
 
 // Section B: EP0 Buffer Space
-volatile far CTRL_TRF_SETUP SetupPkt;
-volatile far CTRL_TRF_DATA CtrlTrfData;
+volatile CTRL_TRF_SETUP SetupPkt;
+volatile CTRL_TRF_DATA CtrlTrfData;
 
 // Section C: Endpoints Buffers
 
-volatile far byte ep1_out_buffer[USBGEN_EP_SIZE];
-volatile far byte ep1_in_buffer[USBGEN_EP_SIZE];
-/*volatile far byte ep2_out_buffer[USBGEN_EP_SIZE];
-volatile far byte ep2_in_buffer[USBGEN_EP_SIZE];
-volatile far byte ep3_out_buffer[USBGEN_EP_SIZE];
-volatile far byte ep3_in_buffer[USBGEN_EP_SIZE];*/
-#pragma udata
+volatile byte ep1_out_buffer[USBGEN_EP_SIZE];
+volatile byte ep1_in_buffer[USBGEN_EP_SIZE];
+/*volatile byte ep2_out_buffer[USBGEN_EP_SIZE];
+volatile byte ep2_in_buffer[USBGEN_EP_SIZE];
+volatile byte ep3_out_buffer[USBGEN_EP_SIZE];
+volatile byte ep3_in_buffer[USBGEN_EP_SIZE];*/
 
-#pragma romdata _rom_usb_endpoints_init
 //defino el ROM_MAX_EP_NUMBER igual al define MAX_EP_NUMBER
-rom unsigned char ROM_MAX_EP_NUMBER=MAX_EP_NUMBER;
+const unsigned char ROM_MAX_EP_NUMBER=MAX_EP_NUMBER;
 
-#pragma code _usb_endpoints_init
 #define USBGEN_UEP              UEP1
 #define BOOT_UEP                UEP1 //uso endpoint 2 para bootloader
 //defino endpoints usados por el modulo
@@ -148,4 +143,3 @@ void USBInitEPs(void){
 
     //boot_trf_state = WAIT_FOR_CMD;
 }//end USBGenInitEP
-#pragma code sys

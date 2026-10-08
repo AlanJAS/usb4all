@@ -71,6 +71,11 @@
 #define PNP_DETECTION_TIME 20000
 /** ESTRUCTURES **/
 
+enum {
+U4A_PNP_READ_VERSION = 0x00,
+            U4A_PNP_GET_RES = 0x01
+};
+
 typedef struct _device_resistance {
     byte name[8]; /*name of the string*/
     WORD resValue_min; /*5v = 1023*/
@@ -85,7 +90,7 @@ typedef struct _port_device_detected {
 extern byte detected_device_type_id[];
 
 /*Remember to change the old maping for that*/
-extern rom const device_resistance table_device_id_resistance[];
+extern const device_resistance table_device_id_resistance[];
 
 #define PNP_MINOR_VERSION 0x01
 #define PNP_MAJOR_VERSION 0x00
@@ -96,26 +101,23 @@ typedef union PNP_PACKET {
 
     struct {
 
-        enum {
-            READ_VERSION = 0x00,
-            GET_RES = 0x01
-        } CMD;
+        byte CMD;
         byte len;
     };
 
     struct {
-        unsigned : 8;
+        unsigned char : 8;
         byte ID;
     };
 
     struct {
-        unsigned : 8;
+        unsigned char : 8;
         byte higth;
         byte low;
     };
 
     struct {
-        unsigned : 8;
+        unsigned char : 8;
         word word_data;
     };
 } PNP_DATA_PACKET;

@@ -38,7 +38,7 @@
 #define IO_CFG_H
 
 /** I N C L U D E S *************************************************/
-#include <p18cxxx.h>
+#include <xc.h>
 #include "autofiles/usbcfg.h"
 
 /** T R I S *********************************************************/

@@ -142,28 +142,29 @@
 #define OVER_HEAD   5           //Overhead: <CMD_CODE><LEN><ADDR:3>
 #define DATA_SIZE   (BOOT_EP_SIZE - OVER_HEAD)
 
+enum {
+U4A_BOOT_READ_VERSION    = 0x00,
+            U4A_BOOT_READ_FLASH      = 0x01,
+            U4A_BOOT_WRITE_FLASH     = 0x02,
+            U4A_BOOT_ERASE_FLASH     = 0x03,
+            U4A_BOOT_READ_EEDATA     = 0x04,
+            U4A_BOOT_WRITE_EEDATA    = 0x05,
+            U4A_BOOT_READ_CONFIG     = 0x06,
+            U4A_BOOT_WRITE_CONFIG    = 0x07,
+            U4A_BOOT_UPDATE_LED      = 0x32,
+            U4A_BOOT_RESET           = 0xFF
+};
+
 typedef union _BOOT_DATA_PACKET
 {
     byte _byte[BOOT_EP_SIZE];  //For Byte Access
     struct
     {
-        enum
-        {
-            READ_VERSION    = 0x00,
-            READ_FLASH      = 0x01,
-            WRITE_FLASH     = 0x02,
-            ERASE_FLASH     = 0x03,
-            READ_EEDATA     = 0x04,
-            WRITE_EEDATA    = 0x05,
-            READ_CONFIG     = 0x06,
-            WRITE_CONFIG    = 0x07,
-            UPDATE_LED      = 0x32,
-            RESET           = 0xFF
-        }CMD;
+        byte CMD;
         byte len;
         union
         {
-            rom far char *pAdr;             //Address Pointer
+            const char *pAdr;             //Address Pointer
             struct
             {
                 byte low;                   //Little-indian order
@@ -175,7 +176,7 @@ typedef union _BOOT_DATA_PACKET
     };
     struct
     {
-        unsigned :8;
+        unsigned char :8;
         byte led_num;
         byte led_status;
     };

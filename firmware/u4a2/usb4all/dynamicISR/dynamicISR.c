@@ -5,7 +5,7 @@
  ********************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
+#include <xc.h>
 #include "system/typedefs.h"                        // Required
 #include "system/usb/usb.h"                         // Required
 #include "io_cfg.h"                                 // Required
@@ -16,12 +16,10 @@
 
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 void ( *ISRFunction[MAX_ISR_FUNCTIONS]) (void) ;//arreglo de punteros a las funciones ISR de los modulos
 byte ISRListeners;
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 
-#pragma code sys
 
 
 void initISRFunctions(void){

@@ -37,8 +37,7 @@
  ********************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
-#include <delays.h>
+#include <xc.h>
 #include "system/typedefs.h"                        // Required
 #include "system/usb/usb.h"                         // Required
 #include "io_cfg.h"                                 // Required
@@ -54,7 +53,6 @@
 
 #include "user/usb4butia.h"
 
-#pragma code sys
 
 /** Fuses configurarion ******************************************************/
 
@@ -175,7 +173,6 @@
 #pragma config EBTRB = OFF
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 static void InitializeSystem(void);
@@ -184,21 +181,17 @@ void USBTasks(void);
 /** V E C T O R  R E M A P P I N G *******************************************/
 
 extern void _startup (void);        // See c018i.c in your C18 compiler dir
-#pragma code _RESET_INTERRUPT_VECTOR = 0x0008C0
 void _reset (void)
 {
     _asm goto _startup _endasm
 }
-#pragma code sys
 
 //#pragma interrupt interruption save=section(".tmpdata")
-#pragma code _HIGH_INTERRUPT_VECTOR = 0x0008C8
 void _high_ISR (void)
 {
     _asm GOTO interruption _endasm //llamo a interruption() de dynamicISR
 }
 
-#pragma code _LOW_INTERRUPT_VECTOR = 0x0008D8
 void _low_ISR (void)
 {
     //interruption();
@@ -206,7 +199,6 @@ void _low_ISR (void)
 //#pragma code
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code sys
 
 /******************************************************************************
  * Function:        void main(void)
@@ -224,7 +216,7 @@ void _low_ISR (void)
  * Note:            None
  *****************************************************************************/
 
-#define WAIT_SECONDS(s) {int i; for(i=0; i<10*(s); i++) Delay10KTCYx(250);}
+
 
 void main(void) {
     InitializeSystem();
@@ -304,5 +296,4 @@ void USBTasks(void) {
 
 }// end USBTasks
 
-#pragma code sys
 /** EOF main.c ***************************************************************/

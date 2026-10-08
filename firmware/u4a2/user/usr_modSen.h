@@ -17,34 +17,35 @@
 #define MODSEN_MAJOR_VERSION   0x00
 
 /** S T R U C T U R E S ******************************************************/
+enum {
+U4A_USR_MODSEN_READ_VERSION = 0x00,
+            U4A_USR_MODSEN_GET_VALUE    = 0x01,
+            U4A_USR_MODSEN_RESET	 = 0xFF /*backward compatibility*/
+};
+
 typedef union MODSEN_DATA_PACKET
 {
     byte _byte[USBGEN_EP_SIZE];  /*For byte access*/
     word _word[USBGEN_EP_SIZE/2];/*For word access(USBGEN_EP_SIZE msut be even)*/
     struct
     {
-        enum
-        {
-            READ_VERSION = 0x00,
-            GET_VALUE    = 0x01,
-            RESET	 = 0xFF /*backward compatibility*/
-        }CMD;
+        byte CMD;
         byte len;
     };
     struct
     {
-        unsigned :8;
+        unsigned char :8;
         byte ID;
     };
     struct
     {
-        unsigned :8;
+        unsigned char :8;
         byte modulea_num;
         byte modulea_status;
     };
     struct
     {
-        unsigned :8;
+        unsigned char :8;
         word word_data;
     };
 } MODSEN_DATA_PACKET;

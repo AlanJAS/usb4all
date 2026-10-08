@@ -79,7 +79,6 @@ WORD getDetectionPinValue6(void);
 /** INITIALIZED DATA **/
 
 
-#pragma romdata
 const port_descriptor board_ports[MAX_PORTS]=
     {
         { &getDataD1 , &getDataA1 , &setData1, &getDetectionPinValue1 , &changeDirectionPort1 },
@@ -92,7 +91,6 @@ const port_descriptor board_ports[MAX_PORTS]=
 
 
 
-#pragma code module
 
 /*------------ Port 1 ------------------*/
 void changeDirectionPort1(direction io){
@@ -101,7 +99,7 @@ void changeDirectionPort1(direction io){
 
 WORD getDataA1(){
 
-    WORD res = 0;
+    WORD res = {0};
     byte counter = 255;
     /*Configure Analogic Chanel 1, AN1 _ PIN 3*/
     ADCON0bits.CHS3 =  0;
@@ -155,7 +153,7 @@ void changeDirectionPort2(direction io){
 
 WORD getDataA2(){
 
-    WORD res = 0;
+    WORD res = {0};
     byte counter = 255;
     /*Configure Analogic Chanel 3, AN3 _ PIN 5*/
     ADCON0bits.CHS3 =  0;
@@ -208,7 +206,7 @@ void changeDirectionPort3(direction io){
 
 WORD getDataA3(){
 
-    WORD res = 0;
+    WORD res = {0};
     byte counter = 255;
     /*Configure Analogic Chanel 6, AN6 _ PIN 9*/
     ADCON0bits.CHS3 =  0;
@@ -261,7 +259,7 @@ void changeDirectionPort4(direction io){
 
 WORD getDataA4(){
 
-    WORD res = 0;
+    WORD res = {0};
     byte counter = 255;
     /*Configure Analogic Chanel 4, AN4 _ PIN 7*/
     ADCON0bits.CHS3 =  0;
@@ -314,7 +312,7 @@ void changeDirectionPort5(direction io){
 
 WORD getDataA5(){
 
-    WORD res = 0;
+    WORD res = {0};
     byte counter = 255;
     /*Configure Analogic Chanel 10, AN10 _ PIN 34*/
     ADCON0bits.CHS3 =  1;
@@ -384,7 +382,7 @@ WORD getDataA6(){
 }
 
 byte getDataD6(){
-    WORD res = 0;
+    WORD res = {0};
     res = getDataA6();
     if (res.HighB.b7)
         return 0x01;

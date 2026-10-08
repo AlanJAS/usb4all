@@ -35,13 +35,12 @@
  ********************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
+#include <xc.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 #include "io_cfg.h"                     // Required for self_power status
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 void USBStdGetDscHandler(void);
@@ -50,7 +49,6 @@ void USBStdGetStatusHandler(void);
 void USBStdFeatureReqHandler(void);
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code sys
 /******************************************************************************
  * Function:        void USBCheckStdRequest(void)
  *
@@ -141,7 +139,7 @@ void USBStdGetDscHandler(void)
         {
             case DSC_DEV:
                 ctrl_trf_session_owner = MUID_USB9;
-                pSrc.bRom = (rom byte*)&device_dsc;
+                pSrc.bRom = (const byte*)&device_dsc;
                 wCount._word = sizeof(device_dsc);          // Set data count
                 break;
             case DSC_CFG:

@@ -10,15 +10,15 @@
 //D E F I N I T I O N S ******************************************
 #define MAX_NUM_INT             1 // For tracking Alternate Setting
 #define EP0_BUFF_SIZE           8   // 8, 16, 32, or 64
-#define CFG01 rom struct 	\
-{   USB_CFG_DSC             cd01;	\
-    USB_INTF_DSC            i00a00;	\
-    USB_EP_DSC              ep01o_i00a00;	\
-    USB_EP_DSC              ep01i_i00a00;	\
-} cfg01
-//		 E X T E R N S **************************************************
-extern rom USB_DEV_DSC device_dsc;
-extern CFG01;
-extern rom const unsigned char *rom USB_CD_Ptr[];
-extern rom const unsigned char *rom USB_SD_Ptr[];
+typedef struct
+{   USB_CFG_DSC             cd01;
+    USB_INTF_DSC            i00a00;
+    USB_EP_DSC              ep01o_i00a00;
+    USB_EP_DSC              ep01i_i00a00;
+} CFG01;
+
+extern const USB_DEV_DSC device_dsc;
+extern const CFG01 cfg01;
+extern const unsigned char *const USB_CD_Ptr[];
+extern const unsigned char *const USB_SD_Ptr[];
 #endif //USBDSC_H

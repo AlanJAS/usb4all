@@ -265,43 +265,43 @@ void BootService(void)
         boot_counter = 0;
         switch(dataBootPacket.CMD)
         {
-            case READ_VERSION:
+            case U4A_BOOT_READ_VERSION:
                 ReadVersion();
                 boot_counter=0x04;
                 break;
 
-            case READ_FLASH:
-            case READ_CONFIG:
+            case U4A_BOOT_READ_FLASH:
+            case U4A_BOOT_READ_CONFIG:
                 ReadProgMem();
                 boot_counter+=0x05;
                 break;
 
-            case WRITE_FLASH:
+            case U4A_BOOT_WRITE_FLASH:
                 WriteProgMem();
                 boot_counter=0x01;
                 break;
 
-            case ERASE_FLASH:
+            case U4A_BOOT_ERASE_FLASH:
                 EraseProgMem();
                 boot_counter=0x01;
                 break;
 
-            case READ_EEDATA:
+            case U4A_BOOT_READ_EEDATA:
                 ReadEE();
                 boot_counter+=0x05;
                 break;
 
-            case WRITE_EEDATA:
+            case U4A_BOOT_WRITE_EEDATA:
                 WriteEE();
                 boot_counter=0x01;
                 break;
 
-            case WRITE_CONFIG:
+            case U4A_BOOT_WRITE_CONFIG:
                 WriteConfig();
                 boot_counter=0x01;
                 break;
             
-            case RESET:
+            case U4A_BOOT_RESET:
                 //When resetting, make sure to drop the device off the bus
                 //for a period of time. Helps when the device is suspended.
                 UCONbits.USBEN = 0;
@@ -311,7 +311,7 @@ void BootService(void)
                 Reset();
                 break;
             
-            case UPDATE_LED:
+            case U4A_BOOT_UPDATE_LED:
                 if(dataBootPacket.led_num == 3)
                 {
                     mLED_3 = dataBootPacket.led_status;
@@ -363,43 +363,43 @@ void bootReceived(byte* recBuffPtr,byte len)
         boot_counter = 0;
         switch(((BOOT_DATA_PACKET*)recBuffPtr)->CMD)
         {
-            case READ_VERSION:
+            case U4A_BOOT_READ_VERSION:
                 ReadVersion(recBuffPtr);
                 boot_counter=0x04;
                 break;
 
-            case READ_FLASH:
-            case READ_CONFIG:
+            case U4A_BOOT_READ_FLASH:
+            case U4A_BOOT_READ_CONFIG:
                 ReadProgMem(recBuffPtr);
                 boot_counter+=0x05;
                 break;
 
-            case WRITE_FLASH:
+            case U4A_BOOT_WRITE_FLASH:
                 WriteProgMem(recBuffPtr);
                 boot_counter=0x01;
                 break;
 
-            case ERASE_FLASH:
+            case U4A_BOOT_ERASE_FLASH:
                 EraseProgMem(recBuffPtr);
                 boot_counter=0x01;
                 break;
 
-            case READ_EEDATA:
+            case U4A_BOOT_READ_EEDATA:
                 ReadEE(recBuffPtr);
                 boot_counter+=0x05;
                 break;
 
-            case WRITE_EEDATA:
+            case U4A_BOOT_WRITE_EEDATA:
                 WriteEE(recBuffPtr);
                 boot_counter=0x01;
                 break;
 
-            case WRITE_CONFIG:
+            case U4A_BOOT_WRITE_CONFIG:
                 WriteConfig(recBuffPtr);
                 boot_counter=0x01;
                 break;
             
-            case RESET:
+            case U4A_BOOT_RESET:
                 //When resetting, make sure to drop the device off the bus
                 //for a period of time. Helps when the device is suspended.
                 UCONbits.USBEN = 0;
@@ -409,7 +409,7 @@ void bootReceived(byte* recBuffPtr,byte len)
                 Reset();
                 break;
             
-            case UPDATE_LED:
+            case U4A_BOOT_UPDATE_LED:
                 if(((BOOT_DATA_PACKET*)recBuffPtr)->led_num == 3)
                 {
                     mLED_3 = ((BOOT_DATA_PACKET*)recBuffPtr)->led_status;
@@ -442,7 +442,7 @@ void bootReceived(int len){
       boot_counter = 0;
       switch(dataBootPacket.CMD)
       {
-          case READ_VERSION:
+          case U4A_BOOT_READ_VERSION:
               //dataPacket._byte[1] is len
               dataBootPacket._byte[2] = BOOT_MINOR_VERSION;
               dataBootPacket._byte[3] = BOOT_MAJOR_VERSION;

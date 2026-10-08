@@ -6,9 +6,7 @@
  *****************************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
-#include <usart.h>
-#include <delays.h>
+#include <xc.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 #include "user/usr_motors.h"
@@ -17,7 +15,6 @@
 #include "usb4all/proxys/T0Service.h"
 #include "pnp.h"
 
-#pragma code module
 
 /* Structures to hold motors */
 typedef struct _MOTOR {
@@ -37,7 +34,6 @@ void turnoffLeft();
 void turnOnLeft();
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 WHEELS wheels;
 byte* sendBufferUsrMotors; // buffer to send data
 fMoveMotor moveLeftMOTOR;
@@ -71,12 +67,9 @@ void speedControl();
 
 // Table used by the framework to get a fixed reference point to the user module functions defined by the framework
 /** USER MODULE REFERENCE*****************************************************/
-#pragma romdata user
 const uTab userMotorsModuleTable = {&UserMotorsInit, &UserMotorsRelease, "motors"};
-#pragma code
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code module
 
 
 void moveRightCC(unsigned int vel, byte sen){
@@ -391,20 +384,20 @@ void UserMotorsReceived(byte* recBuffPtr, byte len, byte handler) {
     byte lowVel1, lowVel2, highVel1, highVel2, idmotor, highV,lowV;
     switch (((MOTORS_DATA_PACKET*) recBuffPtr)->CMD) {
 
-        case READ_VERSION:
+        case U4A_USR_MOTORS_READ_VERSION:
             ((MOTORS_DATA_PACKET*) sendBufferUsrMotors)->_byte[0] = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[0];
             ((MOTORS_DATA_PACKET*) sendBufferUsrMotors)->_byte[1] = MOTORS_MINOR_VERSION;
             ((MOTORS_DATA_PACKET*) sendBufferUsrMotors)->_byte[2] = MOTORS_MAJOR_VERSION;
             userMotorsCounter = 0x03;
             break;
 
-        case GET_TYPE:
+        case U4A_USR_MOTORS_GET_TYPE:
             ((MOTORS_DATA_PACKET*) sendBufferUsrMotors)->_byte[0] = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[0];
             ((MOTORS_DATA_PACKET*) sendBufferUsrMotors)->_byte[1] = MOTORS_T;
             userMotorsCounter = 0x02;
             break;
 
-        case SET_VEL_MTR:
+        case U4A_USR_MOTORS_SET_VEL_MTR:
             ((MOTORS_DATA_PACKET*) sendBufferUsrMotors)->_byte[0] = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[0];
             idmotor = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[1];
             directionRight = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[2];
@@ -432,7 +425,7 @@ void UserMotorsReceived(byte* recBuffPtr, byte len, byte handler) {
             userMotorsCounter = 0x01;
             break;
 
-        case SET_VEL_2MTR:
+        case U4A_USR_MOTORS_SET_VEL_2MTR:
             ((MOTORS_DATA_PACKET*) sendBufferUsrMotors)->_byte[0] = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[0];
             directionRight = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[4];
             highVel1 = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[5];
@@ -466,7 +459,7 @@ void UserMotorsReceived(byte* recBuffPtr, byte len, byte handler) {
             userMotorsCounter = 0x01;
             break;
 
-        case TEST_MOTORS:
+        case U4A_USR_MOTORS_TEST_MOTORS:
             ((MOTORS_DATA_PACKET*) sendBufferUsrMotors)->_byte[0] = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[0];
             sexyMotorMoveStart();
             userMotorsCounter = 0x01;

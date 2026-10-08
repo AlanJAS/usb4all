@@ -6,9 +6,7 @@
  ******************************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
-#include <usart.h>
-#include <delays.h>
+#include <xc.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 #include "user/usr_ax.h"
@@ -17,7 +15,6 @@
 #include "usb4all/proxys/T0Service.h"
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 byte* sendBufferUsrAX;
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
@@ -26,12 +23,9 @@ void UserAX12Received(byte*, byte, byte);
 void UserAX12Release(byte handler);
 
 /** U S E R   M O D U L E   R E F E R E N C E ********************************/
-#pragma romdata user
 const uTab userAX12ModuleTable = {&UserAX12Init, &UserAX12Release, "ax"};
-#pragma code
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code module
 
 void UserAX12Init(byte handler) {
     setHandlerReceiveFunction(handler, &UserAX12Received);
@@ -51,14 +45,14 @@ void UserAX12Received(byte* recBuffPtr, byte lenght, byte usrAXHandler) {
     byte wait_res = 0, len = 0, timeout = 0;
 
     switch (((AX_DATA_PACKET*) recBuffPtr)->CMD) {
-        case READ_VERSION:
+        case U4A_USR_AX_READ_VERSION:
             ((AX_DATA_PACKET*) sendBufferUsrAX)->_byte[0] = ((AX_DATA_PACKET*) recBuffPtr)->_byte[0];
             ((AX_DATA_PACKET*) sendBufferUsrAX)->_byte[1] = AX_MINOR_VERSION;
             ((AX_DATA_PACKET*) sendBufferUsrAX)->_byte[2] = AX_MAJOR_VERSION;
             userAXCounter = 0x03;
             break;
 
-        case SEND_RAW:
+        case U4A_USR_AX_SEND_RAW:
             ((AX_DATA_PACKET*) sendBufferUsrAX)->_byte[0] = ((AX_DATA_PACKET*) recBuffPtr)->_byte[0]; /* OPCODE */
             wait_res = ((AX_DATA_PACKET*) recBuffPtr)->_byte[1]; /* wait_res indicates whether a response is being waited */
             ax12SendRawPacket(recBuffPtr, lenght); /* raw packet is sent */
@@ -80,7 +74,7 @@ void UserAX12Received(byte* recBuffPtr, byte lenght, byte usrAXHandler) {
             }
             break;
 
-        case WRITE_INFO:
+        case U4A_USR_AX_WRITE_INFO:
             ((AX_DATA_PACKET*) sendBufferUsrAX)->_byte[0] = ((AX_DATA_PACKET*) recBuffPtr)->_byte[0];
             id = (byte) (((AX_DATA_PACKET*) recBuffPtr)->_byte[1]);
             regstart = (byte) (((AX_DATA_PACKET*) recBuffPtr)->_byte[2]);
@@ -93,7 +87,7 @@ void UserAX12Received(byte* recBuffPtr, byte lenght, byte usrAXHandler) {
             userAXCounter = 0x02;
             break;
 
-        case READ_INFO:
+        case U4A_USR_AX_READ_INFO:
             ((AX_DATA_PACKET*) sendBufferUsrAX)->_byte[0] = ((AX_DATA_PACKET*) recBuffPtr)->_byte[0];
             id = (((AX_DATA_PACKET*) recBuffPtr)->_byte[1]);
             data[0] = (byte) (((AX_DATA_PACKET*) recBuffPtr)->_byte[2]); /* regstart */
@@ -105,7 +99,7 @@ void UserAX12Received(byte* recBuffPtr, byte lenght, byte usrAXHandler) {
             userAXCounter = 0x03;
             break;
 
-        case RESET:
+        case U4A_USR_AX_RESET:
             Reset();
             break;
 

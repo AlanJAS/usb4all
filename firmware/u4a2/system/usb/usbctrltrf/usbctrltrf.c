@@ -35,12 +35,11 @@
  ********************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <p18cxxx.h>
+#include <xc.h>
 #include "system/typedefs.h"
 #include "system/usb/usb.h"
 
 /** V A R I A B L E S ********************************************************/
-#pragma udata
 byte ctrl_trf_state;                // Control Transfer State
 byte ctrl_trf_session_owner;        // Current transfer session owner
 
@@ -54,7 +53,6 @@ void USBCtrlTrfOutHandler(void);
 void USBCtrlTrfInHandler(void);
 
 /** D E C L A R A T I O N S **************************************************/
-#pragma code sys
 /******************************************************************************
  * Function:        void USBCtrlEPService(void)
  *
