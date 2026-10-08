@@ -141,7 +141,7 @@ void ax12InitSerial(void) {
     SPBRG = 0x04; // BRGH=BRG16 = 1 | OSC = 20MHZ => 1 Mbps
 
     // configuracion de interrupciones
-    INTCONbits.GIE = 1; // habilito interrupciones globales
+    /* Global interrupts are enabled by the initialized ISR dispatcher. */
     INTCONbits.PEIE = 1; // habilito interrupciones de perifericos
 
     TRISCbits.TRISC7 = 1; // PORTC<7> como entrada

@@ -8,6 +8,7 @@
 
 #include "user/adminModule.h"
 #include "system/xc8_eeprom.h"
+#include "system/xc8_clock.h"
 #include "user/pnp.h"
 #include "user/usb4butia.h"
 #include "handlerManager.h"
@@ -15,7 +16,6 @@
 /** V A R I A B L E S ********************************************************/
 byte* sendBufferAdmin;
 byte adminHandler;
-word counter_big;
 
 
 /** USER MODULE REFERENCE *************************************************/
@@ -53,8 +53,7 @@ void goodByeCruelWorld(void) {
     //When resetting, make sure to drop the device off the bus
     //for a period of time. Helps when the device is suspended.
     UCONbits.USBEN = 0;
-    counter_big = 0;
-    while (--counter_big);
+    __delay_ms(100); /* Must not be optimized away before reconnecting USB. */
     Reset();
 }
 

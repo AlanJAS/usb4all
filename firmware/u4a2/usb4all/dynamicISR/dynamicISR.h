@@ -10,7 +10,7 @@
 BOOL addISRFunction(void (*ISRFun) (void));
 BOOL removeISRFunction(void (*ISRFun) (void));
 void initISRFunctions(void);
-void interruption(void);
+/* The ISR is private to dynamicISR.c and is never called as a function. */
 
 #endif
 

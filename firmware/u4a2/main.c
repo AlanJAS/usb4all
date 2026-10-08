@@ -56,6 +56,7 @@
 
 /** Fuses configurarion ******************************************************/
 
+#ifdef U4A_PROGRAM_CONFIG
 /* 96MHZ PLL Prescaler */
 #pragma config PLLDIV = 5
 
@@ -172,6 +173,8 @@
 /* Boot Block Table Read Protection */
 #pragma config EBTRB = OFF
 
+#endif
+
 /** V A R I A B L E S ********************************************************/
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
@@ -180,23 +183,7 @@ void USBTasks(void);
 
 /** V E C T O R  R E M A P P I N G *******************************************/
 
-extern void _startup (void);        // See c018i.c in your C18 compiler dir
-void _reset (void)
-{
-    _asm goto _startup _endasm
-}
-
-//#pragma interrupt interruption save=section(".tmpdata")
-void _high_ISR (void)
-{
-    _asm GOTO interruption _endasm //llamo a interruption() de dynamicISR
-}
-
-void _low_ISR (void)
-{
-    //interruption();
-}
-//#pragma code
+/* XC8 generates reset/interrupt vectors at -mcodeoffset=0x8C0. */
 
 /** D E C L A R A T I O N S **************************************************/
 
@@ -248,8 +235,13 @@ void main(void) {
  * Note:            None
  *****************************************************************************/
 static void InitializeSystem(void) {
+    INTCON = 0;
+    PIE1 = 0;
+    PIE2 = 0;
+    RCONbits.IPEN = 0; /* All enabled sources use the high vector. */
     mInitPortA();mInitPortB();mInitPortC();mInitPortD();mInitPortE(); // set pins as input for safety and interference avoid
     ax12InitSerial();
+    INTCONbits.GIE = 0;
     ADCON1 = ADCON1 & 0xF0;        /* Default all pins to analogic */
     ADCON0bits.ADON = 1;            /* Enable Analogic */
 

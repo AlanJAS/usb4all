@@ -145,7 +145,7 @@ void USBStdGetDscHandler(void)
             case DSC_CFG:
                 ctrl_trf_session_owner = MUID_USB9;
                 pSrc.bRom = *(USB_CD_Ptr+SetupPkt.bDscIndex);
-                wCount._word = *(pSrc.wRom+1);              // Set data count
+                wCount._word = ((word)pSrc.bRom[2] | ((word)pSrc.bRom[3] << 8));              // Set data count
                 break;
             case DSC_STR:
                 ctrl_trf_session_owner = MUID_USB9;

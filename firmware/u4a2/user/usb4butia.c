@@ -414,7 +414,7 @@ WORD getDetectionPinValue6(void){
 /******************************************************************************/
 
 
-const void initPorts(byte motors_cc){
+void initPorts(byte motors_cc){
     byte i;
 
     /*Confiugures pins to be analogic*/

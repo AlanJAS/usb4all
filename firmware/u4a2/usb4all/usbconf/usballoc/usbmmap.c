@@ -18,88 +18,88 @@ byte usb_alt_intf[MAX_NUM_INT]; // Array to keep track of the current alternate
 
 // Section A: Buffer Descriptor Table
 #if(0 <= MAX_EP_NUMBER)
-volatile BDT ep0Bo;
-volatile BDT ep0Bi;
+volatile BDT ep0Bo __at(0x400);
+volatile BDT ep0Bi __at(0x404);
 #endif
 
 #if(1 <= MAX_EP_NUMBER)
-volatile BDT ep1Bo;
-volatile BDT ep1Bi;
+volatile BDT ep1Bo __at(0x408);
+volatile BDT ep1Bi __at(0x40C);
 #endif
 
 #if(2 <= MAX_EP_NUMBER)
-volatile BDT ep2Bo;
-volatile BDT ep2Bi;
+volatile BDT ep2Bo __at(0x410);
+volatile BDT ep2Bi __at(0x414);
 #endif
 
 #if(3 <= MAX_EP_NUMBER)
-volatile BDT ep3Bo;
-volatile BDT ep3Bi;
+volatile BDT ep3Bo __at(0x418);
+volatile BDT ep3Bi __at(0x41C);
 #endif
 
 #if(4 <= MAX_EP_NUMBER)
-volatile BDT ep4Bo;
-volatile BDT ep4Bi;
+volatile BDT ep4Bo __at(0x420);
+volatile BDT ep4Bi __at(0x424);
 #endif
 
 #if(5 <= MAX_EP_NUMBER)
-volatile BDT ep5Bo;
-volatile BDT ep5Bi;
+volatile BDT ep5Bo __at(0x428);
+volatile BDT ep5Bi __at(0x42C);
 #endif
 
 #if(6 <= MAX_EP_NUMBER)
-volatile BDT ep6Bo;
-volatile BDT ep6Bi;
+volatile BDT ep6Bo __at(0x430);
+volatile BDT ep6Bi __at(0x434);
 #endif
 
 #if(7 <= MAX_EP_NUMBER)
-volatile BDT ep7Bo;
-volatile BDT ep7Bi;
+volatile BDT ep7Bo __at(0x438);
+volatile BDT ep7Bi __at(0x43C);
 #endif
 
 #if(8 <= MAX_EP_NUMBER)
-volatile BDT ep8Bo;
-volatile BDT ep8Bi;
+volatile BDT ep8Bo __at(0x440);
+volatile BDT ep8Bi __at(0x444);
 #endif
 
 #if(9 <= MAX_EP_NUMBER)
-volatile BDT ep9Bo;
-volatile BDT ep9Bi;
+volatile BDT ep9Bo __at(0x448);
+volatile BDT ep9Bi __at(0x44C);
 #endif
 
 #if(10 <= MAX_EP_NUMBER)
-volatile BDT ep10Bo;
-volatile BDT ep10Bi;
+volatile BDT ep10Bo __at(0x450);
+volatile BDT ep10Bi __at(0x454);
 #endif
 
 #if(11 <= MAX_EP_NUMBER)
-volatile BDT ep11Bo;
-volatile BDT ep11Bi;
+volatile BDT ep11Bo __at(0x458);
+volatile BDT ep11Bi __at(0x45C);
 #endif
 
 #if(12 <= MAX_EP_NUMBER)
-volatile BDT ep12Bo;
-volatile BDT ep12Bi;
+volatile BDT ep12Bo __at(0x460);
+volatile BDT ep12Bi __at(0x464);
 #endif
 
 #if(13 <= MAX_EP_NUMBER)
-volatile BDT ep13Bo;
-volatile BDT ep13Bi;
+volatile BDT ep13Bo __at(0x468);
+volatile BDT ep13Bi __at(0x46C);
 #endif
 
 #if(14 <= MAX_EP_NUMBER)
-volatile BDT ep14Bo;
-volatile BDT ep14Bi;
+volatile BDT ep14Bo __at(0x470);
+volatile BDT ep14Bi __at(0x474);
 #endif
 
 // Section B: EP0 Buffer Space
-volatile CTRL_TRF_SETUP SetupPkt;
-volatile CTRL_TRF_DATA CtrlTrfData;
+volatile CTRL_TRF_SETUP SetupPkt __at(0x480);
+volatile CTRL_TRF_DATA CtrlTrfData __at(0x488);
 
 // Section C: Endpoints Buffers
 
-volatile byte ep1_out_buffer[USBGEN_EP_SIZE];
-volatile byte ep1_in_buffer[USBGEN_EP_SIZE];
+volatile byte ep1_out_buffer[USBGEN_EP_SIZE] __at(0x4C8);
+volatile byte ep1_in_buffer[USBGEN_EP_SIZE] __at(0x508);
 /*volatile byte ep2_out_buffer[USBGEN_EP_SIZE];
 volatile byte ep2_in_buffer[USBGEN_EP_SIZE];
 volatile byte ep3_out_buffer[USBGEN_EP_SIZE];
@@ -123,23 +123,30 @@ const unsigned char ROM_MAX_EP_NUMBER=MAX_EP_NUMBER;
 void USBInitEPs(void){
     UEP1 = EP_OUT_IN|HSHK_EN;             // Enable 2 data pipes
     ep1Bo.Cnt = sizeof(ep1_out_buffer);     // Set buffer size
-    ep1Bo.ADR = (byte*)&ep1_out_buffer;     // Set buffer address
+    ep1Bo.ADR = (word)&ep1_out_buffer;     // Set buffer address
     ep1Bo.Stat._byte = _USIE|_DAT0|_DTSEN;// Set status
-    ep1Bi.ADR = (byte*)&ep1_in_buffer;      // Set buffer address
+    ep1Bi.ADR = (word)&ep1_in_buffer;      // Set buffer address
     ep1Bi.Stat._byte = _UCPU|_DAT1;      // Set buffer status
     /*UEP2 = EP_OUT_IN|HSHK_EN;             // Enable 2 data pipes
     ep2Bo.Cnt = sizeof(ep2_out_buffer);     // Set buffer size
-    ep2Bo.ADR = (byte*)&ep2_out_buffer;     // Set buffer address
+    ep2Bo.ADR = (word)&ep2_out_buffer;     // Set buffer address
     ep2Bo.Stat._byte = _USIE|_DAT0|_DTSEN;// Set status
-    ep2Bi.ADR = (byte*)&ep2_in_buffer;      // Set buffer address
+    ep2Bi.ADR = (word)&ep2_in_buffer;      // Set buffer address
     ep2Bi.Stat._byte = _UCPU|_DAT1;      // Set buffer status
     UEP3 = EP_OUT_IN|HSHK_EN;             // Enable 2 data pipes
     ep3Bo.Cnt = sizeof(ep3_out_buffer);     // Set buffer size
-    ep3Bo.ADR = (byte*)&ep3_out_buffer;     // Set buffer address
+    ep3Bo.ADR = (word)&ep3_out_buffer;     // Set buffer address
     //ep3Bo.Stat._byte = _USIE|_DAT0|_DTSEN;// Set status
     ep3Bo.Stat._byte = _USIE|_DAT0;// Set status
-    ep3Bi.ADR = (byte*)&ep3_in_buffer;      // Set buffer address
+    ep3Bi.ADR = (word)&ep3_in_buffer;      // Set buffer address
     ep3Bi.Stat._byte = _UCPU|_DAT1;      // Set buffer status*/
 
     //boot_trf_state = WAIT_FOR_CMD;
 }//end USBGenInitEP
+
+/* Fail at compile time if XC8 changes a hardware-visible layout. */
+typedef char check_bd_stat[(sizeof(BD_STAT) == 1) ? 1 : -1];
+typedef char check_bdt[(sizeof(BDT) == 4) ? 1 : -1];
+typedef char check_setup[(sizeof(CTRL_TRF_SETUP) == 8) ? 1 : -1];
+typedef char check_control[(sizeof(CTRL_TRF_DATA) <= 64) ? 1 : -1];
+typedef char check_ep_size[(USBGEN_EP_SIZE == 64 && MAX_EP_NUMBER == 1) ? 1 : -1];

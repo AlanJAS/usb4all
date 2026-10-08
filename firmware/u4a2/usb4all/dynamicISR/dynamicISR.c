@@ -17,7 +17,7 @@
 
 /** V A R I A B L E S ********************************************************/
 void ( *ISRFunction[MAX_ISR_FUNCTIONS]) (void) ;//arreglo de punteros a las funciones ISR de los modulos
-byte ISRListeners;
+volatile byte ISRListeners;
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 
 
@@ -33,7 +33,7 @@ void initISRFunctions(void){
 BOOL addISRFunction(void (*ISRFun) (void)){
     if (ISRListeners==MAX_ISR_FUNCTIONS) return FALSE;
     ISRFunction[ISRListeners] = ISRFun;
-    if ((ISRListeners++) > (byte) 0){
+    if ((ISRListeners++) == (byte) 0){
         INTCONbits.GIE = 1; //cuando se agrega la primer funcion listener prendo ints globales
     }
     return TRUE;
@@ -53,13 +53,11 @@ BOOL removeISRFunction(void (*ISRFun) (void)){
     }
     return FALSE;
 }
-//save is not necessary: http://www.xargs.com/pic/c18-isr-optim.pdf (page 7)
-#pragma interrupt interruption //save=section(".tmpdata")
-void interruption(void){
+/* XC8 saves context and emits RETFIE; do not call this as a C function. */
+void __interrupt(high_priority) interruption(void){
     byte i=0;
     while (i<ISRListeners){
         ISRFunction[i]();
         i++;
     }
 }
-

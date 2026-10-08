@@ -9,19 +9,19 @@
 #define ERROR 0xFF 
 
 // Funciones para acceder a los punteros a los buffers de los endpoints, sustituye a USBGEN_BD_OUT USBGEN_BD_IN
-#define EPBUFFERIN(ep)    (((BDT*)0x400)[2*ep+1].ADR)
-#define EPBUFFEROUT(ep)   (((BDT*)0x400)[2*ep].ADR)
+#define EPBUFFERIN(ep)    ((volatile byte *)(((volatile BDT*)0x400)[2*(ep)+1].ADR))
+#define EPBUFFEROUT(ep)   ((volatile byte *)(((volatile BDT*)0x400)[2*(ep)].ADR))
 
 // Funciones para ver si un endopoint esta ocupado sustituye a mUSBGenTxIsBusy() y mUSBGenRxIsBusy()
-#define EPIN_IS_BUSY(ep)  (((BDT*)0x400)[2*ep+1].Stat.UOWN)
-#define EPOUT_IS_BUSY(ep) (((BDT*)0x400)[2*ep].Stat.UOWN)
+#define EPIN_IS_BUSY(ep)  (((volatile BDT*)0x400)[2*ep+1].Stat.UOWN)
+#define EPOUT_IS_BUSY(ep) (((volatile BDT*)0x400)[2*ep].Stat.UOWN)
 
 // Funciones para saber la cantidad de bytes recibidos o setear la cantidad de byes enviados en un endpoint
-#define EPIN_SIZE(ep)  (((BDT*)0x400)[2*ep+1].Cnt)
-#define EPOUT_SIZE(ep) (((BDT*)0x400)[2*ep].Cnt)
+#define EPIN_SIZE(ep)  (((volatile BDT*)0x400)[2*ep+1].Cnt)
+#define EPOUT_SIZE(ep) (((volatile BDT*)0x400)[2*ep].Cnt)
 
-#define EPIN_BDT(ep) ((BDT*)0x400)[2*ep+1]
-#define EPOUT_BDT(ep) ((BDT*)0x400)[2*ep]
+#define EPIN_BDT(ep) ((volatile BDT*)0x400)[2*ep+1]
+#define EPOUT_BDT(ep) ((volatile BDT*)0x400)[2*ep]
 
 //defino endpoints usados por el modulo
 //TODO o compilar antes de subir, o obtener los endpoints del admin

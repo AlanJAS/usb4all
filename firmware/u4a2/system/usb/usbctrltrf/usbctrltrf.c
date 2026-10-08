@@ -382,7 +382,7 @@ void USBCtrlEPServiceComplete(void)
          * Must also prepare EP0 to receive the next SETUP transaction.
          */
         ep0Bo.Cnt = EP0_BUFF_SIZE;
-        ep0Bo.ADR = (byte*)&SetupPkt;
+        ep0Bo.ADR = (word)&SetupPkt;
 
         ep0Bo.Stat._byte = _USIE|_BSTALL;
         ep0Bi.Stat._byte = _USIE|_BSTALL;
@@ -423,14 +423,14 @@ void USBCtrlEPServiceComplete(void)
              * should be pointed to SetupPkt.
              */
             ep0Bo.Cnt = EP0_BUFF_SIZE;
-            ep0Bo.ADR = (byte*)&SetupPkt;
+            ep0Bo.ADR = (word)&SetupPkt;
             ep0Bo.Stat._byte = _USIE;           // Note: DTSEN is 0!
 
             /*
              * 2. Prepare IN EP to transfer data, Cnt should have
              *    been initialized by responsible request owner.
              */
-            ep0Bi.ADR = (byte*)&CtrlTrfData;
+            ep0Bi.ADR = (word)&CtrlTrfData;
             ep0Bi.Stat._byte = _USIE|_DAT1|_DTSEN;
         }
         else    // (SetupPkt.DataDir == HOST_TO_DEV)
@@ -452,7 +452,7 @@ void USBCtrlEPServiceComplete(void)
              * 2. Prepare OUT EP to receive data.
              */
             ep0Bo.Cnt = EP0_BUFF_SIZE;
-            ep0Bo.ADR = (byte*)&CtrlTrfData;
+            ep0Bo.ADR = (word)&CtrlTrfData;
             ep0Bo.Stat._byte = _USIE|_DAT1|_DTSEN;
         }//end if(SetupPkt.DataDir == DEV_TO_HOST)
     }//end if(ctrl_trf_session_owner == MUID_NULL)
@@ -485,7 +485,7 @@ void USBPrepareForNextSetupTrf(void)
 {
     ctrl_trf_state = WAIT_SETUP;            // See usbctrltrf.h
     ep0Bo.Cnt = EP0_BUFF_SIZE;              // Defined in usbcfg.h
-    ep0Bo.ADR = (byte*)&SetupPkt;
+    ep0Bo.ADR = (word)&SetupPkt;
     ep0Bo.Stat._byte = _USIE|_DAT0|_DTSEN;  // EP0 buff dsc init, see usbmmap.h
     ep0Bi.Stat._byte = _UCPU;               // EP0 IN buffer initialization
 }//end USBPrepareForNextSetupTrf

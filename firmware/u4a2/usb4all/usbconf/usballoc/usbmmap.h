@@ -94,7 +94,7 @@ typedef union _BDT
     {
         unsigned char :8;
         unsigned char :8;
-        byte* ADR;                      //Buffer Address
+        word ADR;                      //Buffer Address
     };
 } BDT;                                  //Buffer Descriptor Table
 
