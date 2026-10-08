@@ -1,4 +1,4 @@
-update=lun 05 ago 2013 18:32:18 UYT
+update=vie 09 ene 2015 10:04:58 UYST
 version=1
 last_client=kicad
 [cvpcb]

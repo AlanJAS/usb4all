@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date vie 03 may 2013 14:35:26 UYT
+EESchema Schematic File Version 2  date jue 08 ago 2013 11:55:20 UYT
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -30,13 +30,13 @@ LIBS:atmel
 LIBS:contrib
 LIBS:valves
 LIBS:led-cache
-EELAYER 25  0
+EELAYER 24 0
 EELAYER END
-$Descr A4 11700 8267
+$Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "3 may 2013"
+Date "8 aug 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -64,6 +64,8 @@ U 1 1 4FAC1BA4
 P 1550 2450
 F 0 "R2" V 1630 2450 50  0000 C CNN
 F 1 "390kΩ" V 1550 2450 50  0000 C CNN
+F 2 "" H 1550 2450 60  0001 C CNN
+F 3 "" H 1550 2450 60  0001 C CNN
 	1    1550 2450
 	1    0    0    -1  
 $EndComp
@@ -91,18 +93,9 @@ U 1 1 4F68816E
 P 2350 1500
 F 0 "J1" H 2550 2000 60  0000 C CNN
 F 1 "RJ45" H 2200 2000 60  0000 C CNN
+F 2 "" H 2350 1500 60  0001 C CNN
+F 3 "" H 2350 1500 60  0001 C CNN
 	1    2350 1500
-	1    0    0    -1  
-$EndComp
-$Comp
-L BC849 Q1
-U 1 1 514B0110
-P 4000 2450
-F 0 "Q1" H 4000 2599 40  0000 R CNN
-F 1 "BC849" H 4000 2300 40  0000 R CNN
-F 2 "SOT-23" H 3900 2348 29  0000 C CNN
-F 3 "~" H 4000 2450 60  0000 C CNN
-	1    4000 2450
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -122,6 +115,8 @@ U 1 1 4FAC1B98
 P 3300 2450
 F 0 "R1" V 3380 2450 50  0000 C CNN
 F 1 "1kΩ" V 3300 2450 50  0000 C CNN
+F 2 "" H 3300 2450 60  0001 C CNN
+F 3 "" H 3300 2450 60  0001 C CNN
 	1    3300 2450
 	0    -1   -1   0   
 $EndComp
@@ -153,4 +148,15 @@ Text GLabel 4100 2800 3    60   Input ~ 0
 GND
 Wire Wire Line
 	4100 2800 4100 2650
+$Comp
+L BC547C Q1
+U 1 1 5203AF4D
+P 4000 2450
+F 0 "Q1" H 4000 2301 40  0000 R CNN
+F 1 "BC547C" H 4000 2600 40  0000 R CNN
+F 2 "TO-92" H 3900 2552 29  0000 C CNN
+F 3 "~" H 4000 2450 60  0000 C CNN
+	1    4000 2450
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

@@ -1,7 +1,7 @@
-Cmp-Mod V01 Created by CvPcb (2013-mar-13)-testing date = jue 08 ago 2013 11:55:55 UYT
+Cmp-Mod V01 Created by CvPCB (2011-05-25)-stable date = mar 15 may 2012 10:40:39 UYT
 
 BeginCmp
-TimeStamp = /514B0133;
+TimeStamp = /4FAC358A;
 Reference = D1;
 ValeurCmp = LED;
 IdModule  = LED-5MM;
@@ -15,31 +15,31 @@ IdModule  = RJ45_8;
 EndCmp
 
 BeginCmp
-TimeStamp = /5203AF4D;
-Reference = Q1;
-ValeurCmp = BC547C;
-IdModule  = TO92;
-EndCmp
-
-BeginCmp
 TimeStamp = /4FAC1B98;
 Reference = R1;
-ValeurCmp = 1kΩ;
+ValeurCmp = R;
 IdModule  = R3;
 EndCmp
 
 BeginCmp
 TimeStamp = /4FAC1BA4;
 Reference = R2;
-ValeurCmp = 390kΩ;
+ValeurCmp = R;
 IdModule  = R3;
 EndCmp
 
 BeginCmp
-TimeStamp = /514B01BB;
+TimeStamp = /4FAC3460;
 Reference = R3;
-ValeurCmp = 120 Ω;
+ValeurCmp = R;
 IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4FAC35A8;
+Reference = VR1;
+ValeurCmp = VR;
+IdModule  = PIN_ARRAY_2X1;
 EndCmp
 
 EndListe
