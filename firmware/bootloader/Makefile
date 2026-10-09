@@ -15,9 +15,12 @@ endif
 
 .DEFAULT_GOAL := all
 .DELETE_ON_ERROR:
-.PHONY: all
+.PHONY: all clean
 all: $(BUILD)/bootloader.hex
 
 $(BUILD)/bootloader.hex: $(SOURCES) $(HEADERS) Makefile
 	mkdir -p "$(BUILD)"
 	"$(XC8)" $(FLAGS) $(SOURCES) -Wl,-Map=$(BUILD)/bootloader.map -o "$@"
+
+clean:
+	rm -rf -- "$(BUILD)"
