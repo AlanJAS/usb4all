@@ -43,6 +43,9 @@ byte current_id = 0;
 byte index = 0;
 byte list_motors[2];
 byte MOTORS_T = MOTORS_AX12;
+/* Existing sentinel: leave this motor speed unchanged. */
+#define MOTOR_SPEED_UNCHANGED 0xFFFFu
+
 word speedLeft;
 word speedRight;
 byte directionLeft;
@@ -183,7 +186,7 @@ void speedControl(){
         if (speedRight == 0u || speedRight == 1023u){
             moveRightMOTOR(speedRight,directionRight);
         }
-        else if(speedRight != -1){
+        else if(speedRight != MOTOR_SPEED_UNCHANGED){
             timeRight = speedRight * (TIME_C/(double)1023);
             onRight = TRUE;
         }
@@ -191,7 +194,7 @@ void speedControl(){
         if (speedLeft == 0u || speedLeft == 1023){
             moveLeftMOTOR(speedLeft,directionLeft);
         }
-        else if (speedLeft != -1){
+        else if (speedLeft != MOTOR_SPEED_UNCHANGED){
             timeLeft = speedLeft * (TIME_C/(double)1023);
             registerT0eventInEvent(0, &turnOnLeft);
         }
@@ -271,7 +274,7 @@ void TryAutoDetect() {
     int _error, _data;
     byte _id, i;
     for (i = 0; i < C_TRIES; i++) {
-        _id = 0xFFFF;
+        _id = 0xFFu;
         ax12SendPacket(current_id, 0, PING, 0);
         ax12ReadPacket(&_id, &_error, &_data);
         if (_id == current_id++) {
@@ -410,9 +413,9 @@ void UserMotorsReceived(byte* recBuffPtr, byte len, byte handler) {
                 changeVel = TRUE;
                 if (idmotor == (byte) 0) {
                     speedLeft = speedRight;
-                    speedRight =-1;
+                    speedRight = MOTOR_SPEED_UNCHANGED;
                 } else {
-                    speedLeft = -1;
+                    speedLeft = MOTOR_SPEED_UNCHANGED;
                 }
             }else{
                 if (idmotor == (byte) 0) {

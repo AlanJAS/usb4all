@@ -106,7 +106,7 @@ void int_vector (void){
 }
 
 
-/*****************************************************************************/
+*****************************************************************************/
 /*************************    Rutina de Interrupcion   ***********************/
 /***************************************************************************** *
 
@@ -280,7 +280,7 @@ byte ax12ReadPacket(byte* s_id, int* s_error, int* s_data) {
     //if (checksum != ax_rx_buffer[ax_rx_Pointer-1]) error+=4;              // Test checksum
     //  if (~checksum !=checksum^0xff) error+=4;              // Test checksum
     if (error != (byte) 0) { //Falta verificar el checksum
-        *s_id = -1;
+        *s_id = 0xFFu;
         *s_error = -1;
         *s_data = -1;
     } else {
@@ -333,6 +333,7 @@ byte ax12ReadPacket(byte* s_id, int* s_error, int* s_data) {
 /*****************************************************************************/
 
 byte writeInfo(byte id, byte regstart, int value) {
+    word raw_value = (word)value; /* Serialize the existing 16-bit pattern. */
     byte reglength = 0;
     byte data [MAX_PACKET_SIZE];
     switch (regstart) {
@@ -347,9 +348,9 @@ byte writeInfo(byte id, byte regstart, int value) {
     }
 
     data [0] = regstart;
-    data [1] = value & 0xFF;
+    data [1] = (byte)(raw_value & 0xFFu);
     if (reglength > (byte) 1) {
-        data[2] = (value & 0xFF00) >> 8;
+        data[2] = (byte)(raw_value >> 8);
     }
     ax12SendPacket(id, reglength + 1, WRITE_DATA, data);
 

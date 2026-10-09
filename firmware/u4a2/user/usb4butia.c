@@ -94,7 +94,7 @@ const port_descriptor board_ports[MAX_PORTS]=
 
 /*------------ Port 1 ------------------*/
 void changeDirectionPort1(direction io){
-    TRISAbits.RA1 = io;
+    TRISAbits.RA1 = (byte)io;
 }
 
 WORD getDataA1(){
@@ -148,7 +148,7 @@ WORD getDetectionPinValue1(void){
 
 /*------------ Port 2 ------------------*/
 void changeDirectionPort2(direction io){
-    TRISAbits.RA3 = io;
+    TRISAbits.RA3 = (byte)io;
 }
 
 WORD getDataA2(){
@@ -201,7 +201,7 @@ WORD getDetectionPinValue2(void){
 
 /*------------ Port 3 ------------------*/
 void changeDirectionPort3(direction io){
-    TRISEbits.RE1 = io;
+    TRISEbits.RE1 = (byte)io;
 }
 
 WORD getDataA3(){
@@ -254,7 +254,7 @@ WORD getDetectionPinValue3(void){
 
 /*------------ Port 4 ------------------*/
 void changeDirectionPort4(direction io){
-    TRISAbits.RA5 = io;
+    TRISAbits.RA5 = (byte)io;
 }
 
 WORD getDataA4(){
@@ -307,7 +307,7 @@ WORD getDetectionPinValue4(void){
 
 /*------------ Port 5 ------------------*/
 void changeDirectionPort5(direction io){
-    TRISBbits.RB1 = io;
+    TRISBbits.RB1 = (byte)io;
 }
 
 WORD getDataA5(){
@@ -360,7 +360,7 @@ WORD getDetectionPinValue5(void){
 
 /*------------ Port 6 ------------------*/
 void changeDirectionPort6(direction io){
-    TRISBbits.RB3 = io;
+    TRISBbits.RB3 = (byte)io;
 }
 
 WORD getDataA6(){

@@ -59,7 +59,7 @@ void goodByeCruelWorld(void) {
 
 void adminReceived(byte* recBuffPtr, byte len, byte admin_handler) {
     byte adminCounter;
-    byte endIn = nullEP;
+    byte endIn; /* Assigned from the OPEN request before use. */
     byte lineNumber = 0;
     char lineName[8];
     const uTab *tableDirec;
@@ -98,7 +98,7 @@ void adminReceived(byte* recBuffPtr, byte len, byte admin_handler) {
             /* Cierra un user module */
         case U4A_ADMINMODULE_CLOSE:
             handler = ((AM_PACKET*) recBuffPtr)->handlerNumber;
-            response = removeHandlerTableEntry(handler);
+            response = (byte)removeHandlerTableEntry(handler); /* ACK/NACK: 1/0. */
             ((AM_PACKET*) sendBufferAdmin)->response = response;
             ((AM_PACKET*) sendBufferAdmin)->CMD = U4A_ADMINMODULE_CLOSE;
             adminCounter = 0x02; //1 byte para el campo CMD, otro para la respuesta
