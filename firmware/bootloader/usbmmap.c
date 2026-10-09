@@ -159,8 +159,6 @@
 byte usb_device_state;          // Device States: DETACHED, ATTACHED, ...
 USB_DEVICE_STATUS usb_stat;     // Global USB flags
 byte usb_active_cfg;            // Value of current configuration
-byte usb_alt_intf[MAX_NUM_INT]; // Array to keep track of the current alternate
-                                // setting for each interface ID
 
 /** U S B  F I X E D  L O C A T I O N  V A R I A B L E S *********************/
 #if !defined(__XC8)

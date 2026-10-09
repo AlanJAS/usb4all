@@ -129,7 +129,6 @@ typedef union _BDT
 extern byte usb_device_state;
 extern USB_DEVICE_STATUS usb_stat;
 extern byte usb_active_cfg;
-extern byte usb_alt_intf[MAX_NUM_INT];
 
 extern volatile BOOT_FAR BDT ep0Bo;          //Endpoint #0 BD Out
 extern volatile BOOT_FAR BDT ep0Bi;          //Endpoint #0 BD In
