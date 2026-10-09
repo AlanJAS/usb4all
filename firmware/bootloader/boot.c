@@ -47,6 +47,15 @@
 #include "usb.h"
 #include "io_cfg.h"
 
+/* Temporary C18 adapter: the USB packet contains a 24-bit byte address,
+ * not a compiler pointer. Replace this adapter and the ROM dereferences
+ * with explicit table operations in the XC8 memory-access migration.
+ */
+#define BOOT_C18_ADDRESS() ((rom far char *)( \
+    (unsigned long)dataPacket.ADR.low | \
+    ((unsigned long)dataPacket.ADR.high << 8) | \
+    ((unsigned long)dataPacket.ADR.upper << 16)))
+
 /** V A R I A B L E S ********************************************************/
 #pragma udata
 byte counter;
@@ -130,7 +139,7 @@ void ReadProgMem(void) //TESTED: Passed
     for (counter = 0; counter < dataPacket.len; counter++)
     {
         //2 separate inst prevents compiler from using RAM stack
-        byteTemp = *((dataPacket.ADR.pAdr)+counter);
+        byteTemp = *((BOOT_C18_ADDRESS())+counter);
         dataPacket.data[counter] = byteTemp;
     }//end for
     
@@ -154,7 +163,7 @@ void WriteProgMem(void) //TESTED: Passed
 
     for (counter = 0; counter < (dataPacket.len); counter++)
     {
-        *((dataPacket.ADR.pAdr)+counter) = \
+        *((BOOT_C18_ADDRESS())+counter) = \
         dataPacket.data[counter];
         if ((counter & 0b00001111) == 0b00001111)
         {
@@ -172,7 +181,7 @@ void EraseProgMem(void) //TESTED: Passed
     EECON1 = 0b10010100;     //Setup writes: EEPGD=1,FREE=1,WREN=1
     for(counter=0; counter < dataPacket.len; counter++)
     {
-        *(dataPacket.ADR.pAdr+(((int)counter) << 6));  //Load TBLPTR
+        *(BOOT_C18_ADDRESS()+(((int)counter) << 6));  //Load TBLPTR
         StartWrite();
     }//end for
     TBLPTRU = 0;            // forces upper byte back to 0x00
@@ -185,7 +194,7 @@ void ReadEE(void) //TESTED: Passed
     EECON1 = 0x00;
     for(counter=0; counter < dataPacket.len; counter++)
     {
-        EEADR = (byte)dataPacket.ADR.pAdr + counter;
+        EEADR = dataPacket.ADR.low + counter;
         //EEADRH = (BYTE)(((int)dataPacket.FIELD.ADDR.POINTER + counter) >> 8);
         EECON1_RD = 1;
         dataPacket.data[counter] = EEDATA;
@@ -196,7 +205,7 @@ void WriteEE(void) //TESTED: Passed
 {
     for(counter=0; counter < dataPacket.len; counter++)
     {
-        EEADR = (byte)dataPacket.ADR.pAdr + counter;
+        EEADR = dataPacket.ADR.low + counter;
         //EEADRH = (BYTE)(((int)dataPacket.FIELD.ADDR.POINTER + counter) >> 8);
         EEDATA = dataPacket.data[counter];
         EECON1 = 0b00000100;    //Setup writes: EEPGD=0,WREN=1
@@ -211,7 +220,7 @@ void WriteConfig(void) //TESTED: Passed
     EECON1 = 0b11000100;        //Setup writes: EEPGD=1,CFGS=1,WREN=1
     for (counter = 0; counter < dataPacket.len; counter++)
     {
-        *((dataPacket.ADR.pAdr)+counter) = \
+        *((BOOT_C18_ADDRESS())+counter) = \
         dataPacket.data[counter];
         StartWrite();
     }//end for

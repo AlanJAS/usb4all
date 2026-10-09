@@ -160,47 +160,62 @@
  *
  ********************************************************************/
 
-#define OVER_HEAD   5           //Overhead: <CMD_CODE><LEN><ADDR:3>
-#define DATA_SIZE   (BOOT_EP_SIZE - OVER_HEAD)
+#include <stddef.h>
+
+#define OVER_HEAD 5
+#define DATA_SIZE (BOOT_EP_SIZE - OVER_HEAD)
+
+enum BOOT_COMMAND
+{
+    READ_VERSION    = 0x00,
+    READ_FLASH      = 0x01,
+    WRITE_FLASH     = 0x02,
+    ERASE_FLASH     = 0x03,
+    READ_EEDATA     = 0x04,
+    WRITE_EEDATA    = 0x05,
+    READ_CONFIG     = 0x06,
+    WRITE_CONFIG    = 0x07,
+    UPDATE_LED      = 0x32,
+    RESET           = 0xFF
+};
 
 typedef union _BOOT_DATA_PACKET
 {
-    byte _byte[BOOT_EP_SIZE];  //For Byte Access
+    unsigned char _byte[BOOT_EP_SIZE];
     struct
     {
-        enum
+        unsigned char CMD;
+        unsigned char len;
+        struct
         {
-            READ_VERSION    = 0x00,
-            READ_FLASH      = 0x01,
-            WRITE_FLASH     = 0x02,
-            ERASE_FLASH     = 0x03,
-            READ_EEDATA     = 0x04,
-            WRITE_EEDATA    = 0x05,
-            READ_CONFIG     = 0x06,
-            WRITE_CONFIG    = 0x07,
-            UPDATE_LED      = 0x32,
-            RESET           = 0xFF
-        }CMD;
-        byte len;
-        union
-        {
-            rom far char *pAdr;             //Address Pointer
-            struct
-            {
-                byte low;                   //Little-indian order
-                byte high;
-                byte upper;
-            };
-        }ADR;
-        byte data[DATA_SIZE];
+            unsigned char low;
+            unsigned char high;
+            unsigned char upper;
+        } ADR;
+        unsigned char data[DATA_SIZE];
     };
     struct
     {
-        unsigned :8;
-        byte led_num;
-        byte led_status;
+        unsigned char led_command;
+        unsigned char led_num;
+        unsigned char led_status;
     };
 } BOOT_DATA_PACKET;
+
+/* Keep the host protocol independent of enum and pointer widths.
+ * Typedef checks also work with compilers without C11 _Static_assert.
+ */
+#define BOOT_CHECK(name, condition) typedef char name[(condition) ? 1 : -1]
+BOOT_CHECK(boot_packet_size, sizeof(BOOT_DATA_PACKET) == 64);
+BOOT_CHECK(boot_command_size, sizeof(((BOOT_DATA_PACKET *)0)->CMD) == 1);
+BOOT_CHECK(boot_command_offset, offsetof(BOOT_DATA_PACKET, CMD) == 0);
+BOOT_CHECK(boot_length_offset, offsetof(BOOT_DATA_PACKET, len) == 1);
+BOOT_CHECK(boot_address_size, sizeof(((BOOT_DATA_PACKET *)0)->ADR) == 3);
+BOOT_CHECK(boot_address_offset, offsetof(BOOT_DATA_PACKET, ADR) == 2);
+BOOT_CHECK(boot_data_offset, offsetof(BOOT_DATA_PACKET, data) == OVER_HEAD);
+BOOT_CHECK(boot_led_number_offset, offsetof(BOOT_DATA_PACKET, led_num) == 1);
+BOOT_CHECK(boot_led_status_offset, offsetof(BOOT_DATA_PACKET, led_status) == 2);
+#undef BOOT_CHECK
 
 /** E X T E R N S ************************************************************/
 
