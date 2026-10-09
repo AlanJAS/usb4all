@@ -42,24 +42,29 @@
  *****************************************************************************/
 
 /** I N C L U D E S **********************************************************/
+#if defined(__XC8)
+#include <xc.h>
+#else
 #include <p18cxxx.h>
+#endif
 #include "typedefs.h"
 #include "usb.h"
 #include "io_cfg.h"
 
-/* Temporary C18 adapter: the USB packet contains a 24-bit byte address,
- * not a compiler pointer. Replace this adapter and the ROM dereferences
- * with explicit table operations in the XC8 memory-access migration.
+/* Table instructions must remain explicit: ordinary C pointer accesses
+ * do not provide the Flash programming semantics required here.
  */
-#define BOOT_C18_ADDRESS() ((rom far char *)( \
-    (unsigned long)dataPacket.ADR.low | \
-    ((unsigned long)dataPacket.ADR.high << 8) | \
-    ((unsigned long)dataPacket.ADR.upper << 16)))
+#if defined(__XC8)
+#define BootTableRead()  asm("tblrd*")
+#define BootTableWrite() asm("tblwt*")
+#else
+#define BootTableRead()  _asm TBLRD* _endasm
+#define BootTableWrite() _asm TBLWT* _endasm
+#endif
 
 /** V A R I A B L E S ********************************************************/
 #pragma udata
 byte counter;
-byte byteTemp;
 byte trf_state;
 
 word big_counter;
@@ -118,116 +123,146 @@ void BootInitEP(void)
 
 }//end BootInitEP
 
-void StartWrite(void)
+/* offset is measured in bytes, including for erase commands. Loading
+ * all three registers on each access preserves carries across 0xFFFF.
+ */
+static void LoadTablePointer(word offset)
 {
-    /*
-     * A write command can be prematurely terminated by MCLR or WDT reset
-     */
-    EECON2 = 0x55;
-    EECON2 = 0xAA;
-    EECON1_WR = 1;
-}//end StartWrite
+    unsigned long address;
+    address = (unsigned long)dataPacket.ADR.low |
+              ((unsigned long)dataPacket.ADR.high << 8) |
+              ((unsigned long)dataPacket.ADR.upper << 16);
+    address += offset;
+    TBLPTRU = (byte)(address >> 16);
+    TBLPTRH = (byte)(address >> 8);
+    TBLPTRL = (byte)address;
+}
 
-void ReadVersion(void) //TESTED: Passed
+static void StartWrite(void)
+{
+    byte interrupt_enable;
+    EECON1bits.WREN = 1;
+    interrupt_enable = INTCON & 0xC0;
+    INTCON &= 0x3F;       /* Disable both interrupt priority levels. */
+#if defined(__XC8)
+    /* PIC18F4550 access-bank SFRs: EECON2=0xFA7, EECON1=0xFA6.
+     * Keep the unlock and WR set contiguous, independent of optimization.
+     */
+    asm("movlw 0x55\n"
+        "movwf 0xFA7,0\n"
+        "movlw 0xAA\n"
+        "movwf 0xFA7,0\n"
+        "bsf 0xFA6,1,0\n"
+        "nop");
+#else
+    _asm
+        MOVLW 0x55
+        MOVWF EECON2, 0
+        MOVLW 0xAA
+        MOVWF EECON2, 0
+        BSF EECON1, 1, 0
+        NOP
+    _endasm
+#endif
+    /* Flash stalls the CPU; EEPROM completes asynchronously. */
+    while(EECON1bits.WR) { }
+    EECON1bits.WREN = 0;
+    INTCON |= interrupt_enable;
+}
+
+byte BootReadEEPROM(byte address)
+{
+    while(EECON1bits.WR) { }
+    EECON1 = 0x00;        /* Data EEPROM, not Flash/configuration. */
+    EEADR = address;
+    EECON1bits.RD = 1;
+    return EEDATA;
+}
+
+void BootWriteEEPROM(byte address, byte value)
+{
+    while(EECON1bits.WR) { }
+    EECON1 = 0x00;
+    EEADR = address;
+    EEDATA = value;
+    StartWrite();
+}
+
+void ReadVersion(void)
 {
     dataPacket._byte[2] = MINOR_VERSION;
     dataPacket._byte[3] = MAJOR_VERSION;
-}//end ReadVersion
+}
 
-void ReadProgMem(void) //TESTED: Passed
+void ReadProgMem(void)
 {
-    for (counter = 0; counter < dataPacket.len; counter++)
+    for(counter = 0; counter < dataPacket.len; counter++)
     {
-        //2 separate inst prevents compiler from using RAM stack
-        byteTemp = *((BOOT_C18_ADDRESS())+counter);
-        dataPacket.data[counter] = byteTemp;
-    }//end for
-    
-    TBLPTRU = 0x00;         // forces upper byte back to 0x00
-                            // optional fix is to set large code model
-}//end ReadProgMem
+        LoadTablePointer(counter);
+        BootTableRead();
+        dataPacket.data[counter] = TABLAT;
+    }
+    TBLPTRU = 0;
+}
 
-void WriteProgMem(void) //TESTED: Passed
+void WriteProgMem(void)
 {
-    /*
-     * The write holding register for the 18F4550 family is
-     * actually 32-byte. The code below only tries to write
-     * 16-byte because the GUI program only sends out 16-byte
-     * at a time.
-     * This limitation will be fixed in the future version.
+    /* Preserve the host's 16-byte write units and alignment. The device
+     * has 32 holding registers; a commit is issued after each 16 bytes,
+     * as in the C18 implementation. Do not increment TBLPTR before WR:
+     * it must still point into the block containing the loaded latches.
      */
-    dataPacket.ADR.low &= 0b11110000;  //Force 16-byte boundary
-    EECON1 = 0b10000100;        //Setup writes: EEPGD=1,WREN=1
-
-    //LEN = # of byte to write
-
-    for (counter = 0; counter < (dataPacket.len); counter++)
+    dataPacket.ADR.low &= 0xF0;
+    EECON1 = 0x80;        /* EEPGD=1, CFGS=0, FREE=0. */
+    for(counter = 0; counter < dataPacket.len; counter++)
     {
-        *((BOOT_C18_ADDRESS())+counter) = \
-        dataPacket.data[counter];
-        if ((counter & 0b00001111) == 0b00001111)
-        {
+        LoadTablePointer(counter);
+        TABLAT = dataPacket.data[counter];
+        BootTableWrite();
+        if((counter & 0x0F) == 0x0F)
             StartWrite();
-        }//end if
-    }//end for
-}//end WriteProgMem
+    }
+    TBLPTRU = 0;
+}
 
-void EraseProgMem(void) //TESTED: Passed
+void EraseProgMem(void)
 {
-    //The most significant 16 bits of the address pointer points to the block
-    //being erased. Bits5:0 are ignored. (In hardware).
-
-    //LEN = # of 64-byte block to erase
-    EECON1 = 0b10010100;     //Setup writes: EEPGD=1,FREE=1,WREN=1
-    for(counter=0; counter < dataPacket.len; counter++)
+    /* len counts 64-byte erase blocks; hardware ignores address bits 5:0. */
+    EECON1 = 0x90;        /* EEPGD=1, CFGS=0, FREE=1. */
+    for(counter = 0; counter < dataPacket.len; counter++)
     {
-        *(BOOT_C18_ADDRESS()+(((int)counter) << 6));  //Load TBLPTR
+        LoadTablePointer((word)((word)counter << 6));
         StartWrite();
-    }//end for
-    TBLPTRU = 0;            // forces upper byte back to 0x00
-                            // optional fix is to set large code model
-                            // (for USER ID 0x20 0x00 0x00)
-}//end EraseProgMem
+    }
+    TBLPTRU = 0;
+}
 
-void ReadEE(void) //TESTED: Passed
+void ReadEE(void)
 {
-    EECON1 = 0x00;
-    for(counter=0; counter < dataPacket.len; counter++)
-    {
-        EEADR = dataPacket.ADR.low + counter;
-        //EEADRH = (BYTE)(((int)dataPacket.FIELD.ADDR.POINTER + counter) >> 8);
-        EECON1_RD = 1;
-        dataPacket.data[counter] = EEDATA;
-    }//end for
-}//end ReadEE
+    for(counter = 0; counter < dataPacket.len; counter++)
+        dataPacket.data[counter] =
+            BootReadEEPROM((byte)(dataPacket.ADR.low + counter));
+}
 
-void WriteEE(void) //TESTED: Passed
+void WriteEE(void)
 {
-    for(counter=0; counter < dataPacket.len; counter++)
+    for(counter = 0; counter < dataPacket.len; counter++)
+        BootWriteEEPROM((byte)(dataPacket.ADR.low + counter),
+                        dataPacket.data[counter]);
+}
+
+void WriteConfig(void)
+{
+    EECON1 = 0xC0;        /* EEPGD=1, CFGS=1, FREE=0. */
+    for(counter = 0; counter < dataPacket.len; counter++)
     {
-        EEADR = dataPacket.ADR.low + counter;
-        //EEADRH = (BYTE)(((int)dataPacket.FIELD.ADDR.POINTER + counter) >> 8);
-        EEDATA = dataPacket.data[counter];
-        EECON1 = 0b00000100;    //Setup writes: EEPGD=0,WREN=1
+        LoadTablePointer(counter);
+        TABLAT = dataPacket.data[counter];
+        BootTableWrite();
         StartWrite();
-        while(EECON1_WR);       //Wait till WR bit is clear
-    }//end for
-}//end WriteEE
-
-//WriteConfig is different from WriteProgMem b/c it can write a byte
-void WriteConfig(void) //TESTED: Passed
-{
-    EECON1 = 0b11000100;        //Setup writes: EEPGD=1,CFGS=1,WREN=1
-    for (counter = 0; counter < dataPacket.len; counter++)
-    {
-        *((BOOT_C18_ADDRESS())+counter) = \
-        dataPacket.data[counter];
-        StartWrite();
-    }//end for
-    
-    TBLPTRU = 0x00;         // forces upper byte back to 0x00
-                            // optional fix is to set large code model
-}//end WriteConfig
+    }
+    TBLPTRU = 0;
+}
 
 void BootService(void)
 {

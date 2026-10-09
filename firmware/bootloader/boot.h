@@ -220,6 +220,8 @@ BOOT_CHECK(boot_led_status_offset, offsetof(BOOT_DATA_PACKET, led_status) == 2);
 /** E X T E R N S ************************************************************/
 
 /** P U B L I C  P R O T O T Y P E S *****************************************/
+byte BootReadEEPROM(byte address);
+void BootWriteEEPROM(byte address, byte value);
 void BootInitEP(void);
 void BootService(void);
 

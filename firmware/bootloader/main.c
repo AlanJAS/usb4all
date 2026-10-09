@@ -48,7 +48,6 @@ with the PIC18F87J50 Family of microcontrollers.
 #include "io_cfg.h"                                 // Required
 
 #include "usb_compile_time_validation.h" // Optional
-#include "EEP.h"
 /** C O N F I G U R A T I O N ************************************************/
 
 #if   defined(__18F4550)||defined(__18F4455)|| \
@@ -124,28 +123,7 @@ void _low_ISR (void)
 
 /** D E C L A R A T I O N S **************************************************/
 #pragma code
-/*
-#define ADDRESS_BOOT    0x09
-#define BOOT_FLAG       0x11
-#define RESET_FLAG		0xFF
 
-void Busy_eep_non_block ( void ){
-    byte j = 255;
-    while(EECON1bits.WR && j-->0);
-}
-
-unsigned char read_boot(void){
-	unsigned char data_eeprom;
-	data_eeprom = Read_b_eep(ADDRESS_BOOT);
-	if(data_eeprom == BOOT_FLAG){
-		Busy_eep_non_block();
-		Write_b_eep(ADDRESS_BOOT,RESET_FLAG);
-		return 1;
-	}
-	else
-    	return 0;
-}
-*/
 /******************************************************************************
  * Function:        void main(void)
  *
@@ -166,7 +144,6 @@ void main(void)
     byte temp;
 	//unsigned char bandera = 0;
 	unsigned char data_eeprom = 0xFF;
-	byte j = 255;
     temp = ADCON1;
     ADCON1 |= 0x0F;
     
@@ -178,10 +155,9 @@ void main(void)
 	LATBbits.LATB0 = 1;
 	/*LATBbits.LATB1 = 1;
 	LATBbits.LATB6 = 1;*/
-	data_eeprom = Read_b_eep(0x09);
+	data_eeprom = BootReadEEPROM(0x09);
 	if(data_eeprom == 0x11){
-    	while(EECON1bits.WR && j-->0);
-		Write_b_eep(0x09,0xFF);
+		BootWriteEEPROM(0x09,0xFF);
 		data_eeprom = 1;
 	}
 	else {
