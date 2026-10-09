@@ -23,6 +23,11 @@ HM_DATA_PACKET_HEADER hmDataPacketHeader;
 byte* HandlerReceiveBuffer[MAX_HANDLERS];
 void (*handlerReceivedFuncion[MAX_HANDLERS]) (byte*, byte, byte); //arreglo de punteros a las funcioens received de los modulos
 HANDLER_OPTYPE hn_opType;
+/* Active modules receive/reply synchronously from USBGenRead2 in main.
+ * Ordinary RAM is never shared with the USB DMA engine. These buffers must
+ * not be used by ISR callbacks or retained for asynchronous responses. */
+static byte receiveData[PACKET_DATA_SIZE];
+static byte transmitData[PACKET_DATA_SIZE];
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 
@@ -47,6 +52,7 @@ void unsetHandlerReceiveFunction(byte handler){
 void USBGenRead2(void){
     byte len;
     byte handler;
+    byte i;
     byte ep = 1;
     volatile HM_DATA_PACKET_HEADER* dph;
 
@@ -61,10 +67,15 @@ void USBGenRead2(void){
             dph = (volatile HM_DATA_PACKET_HEADER*)EPBUFFEROUT(ep);
             handler = dph->handlerNumber;
             if (handler < MAX_HANDLERS && !epHandlerMap[handler].ep.empty &&
-                handlerReceivedFuncion[handler] != 0) {
-                handlerReceivedFuncion[handler](
-                    EPBUFFEROUT(ep) + SIZE__HM_DATA_PACKET_HEADER,
-                    (byte)(len - SIZE__HM_DATA_PACKET_HEADER), handler);
+                handlerReceivedFuncion[handler] != 0 &&
+                epHandlerMap[handler].ep.EPNum == ep) {
+                /* Keep OUT CPU-owned until the previous reply is consumed.
+                 * Do not execute a command whose reply cannot yet be sent. */
+                if (EPIN_IS_BUSY(ep)) return;
+                len = (byte)(len - SIZE__HM_DATA_PACKET_HEADER);
+                for (i = 0; i < len; ++i)
+                    receiveData[i] = EPBUFFEROUT(ep)[i + SIZE__HM_DATA_PACKET_HEADER];
+                handlerReceivedFuncion[handler](receiveData, len, handler);
             }
         }
 
@@ -75,42 +86,30 @@ void USBGenRead2(void){
 }
 
 void USBGenWrite2(byte handler, byte len) {
-    byte j = 255;
-    epHandlerMapItem hmi;
+    byte i;
     byte ep;
+    volatile byte *buffer;
 
-    if (len == (byte) 0) return;
+    if (len == 0u || handler >= MAX_HANDLERS) return;
+    if (usb_device_state < CONFIGURED_STATE || UCONbits.SUSPND) return;
+    if (epHandlerMap[handler].ep.empty) return;
+    ep = epHandlerMap[handler].ep.EPNum;
+    /* USBInitEPs currently configures only endpoint 1. */
+    if (ep != 1u || EPIN_IS_BUSY(ep)) return;
+    if (len > PACKET_DATA_SIZE) len = PACKET_DATA_SIZE;
 
-    hmi = epHandlerMap[handler];
-    ep = hmi.ep.EPNum;
-
-    while (EPIN_IS_BUSY(ep) && j-- > (byte) 0);
-
-    if(!EPIN_IS_BUSY(ep)) {
-        /*
-        * Value of len should be equal to or smaller than USBGEN_EP_SIZE.
-        * This check forces the value of len to meet the precondition.
-        */
-        if(len > PACKET_DATA_SIZE)
-            len = PACKET_DATA_SIZE;
-
-        //seteo los datos del header
-        hn_opType.handlerNumber=handler;
-        hn_opType.operationType=SEND;
-        //copio el header en la dual-ram buffer
-        EPBUFFERIN(ep)[0] = hn_opType.hn_op;
-        EPBUFFERIN(ep)[1] = len+SIZE__HM_DATA_PACKET_HEADER;
-        EPBUFFERIN(ep)[2] = 0;
-        //Copy data from user's buffer to dual-ram buffer
-        EPIN_SIZE(ep) = len+SIZE__HM_DATA_PACKET_HEADER;
-
-        mUSBBufferReady2(EPIN_BDT(ep));
-    }
-
-    //TODO deshardcodear la invocacion segun el numero hay que hacerlo segun el tipo de endpoint
-    //mUSBBufferReady3 solo debe de invocarse para los endpoints interrupt*/
-
-}//end USBGenWrite
+    buffer = EPBUFFERIN(ep);
+    hn_opType.handlerNumber = handler;
+    hn_opType.operationType = SEND;
+    buffer[0] = hn_opType.hn_op;
+    buffer[1] = (byte)(len + SIZE__HM_DATA_PACKET_HEADER);
+    buffer[2] = 0;
+    for (i = 0; i < len; ++i)
+        buffer[i + SIZE__HM_DATA_PACKET_HEADER] = transmitData[i];
+    EPIN_SIZE(ep) = (byte)(len + SIZE__HM_DATA_PACKET_HEADER);
+    /* Publish ownership only after all volatile buffer writes are complete. */
+    mUSBBufferReady2(EPIN_BDT(ep));
+}
 
 byte newHandlerTableEntry(byte endPIn, const uTab *uTableDirection){
     byte i = 0;
@@ -216,17 +215,10 @@ byte removeAllOpenModules(void){
 }
 
 byte* getSharedBuffer(byte handler){
-    // esta hecho para modo 0 ping pong
-    epHandlerMapItem hmi;
-    byte ep;
-    hmi = epHandlerMap[handler];
-    ep = hmi.ep.EPNum;
-    if (handler == (byte) 0)
-        //Se que el admin atiende el endpoint 1 y esta es la forma que tengo de
-        // que se pueda inicializar antes el admin que la tabla de BDTs
-        return &ep1_in_buffer[SIZE__HM_DATA_PACKET_HEADER];
-    else
-        return EPBUFFERIN(ep) + SIZE__HM_DATA_PACKET_HEADER;
+    /* All active modules share the foreground reply scratch buffer.
+     * This is safe even before USBInitEPs initializes the DMA descriptors. */
+    if (handler >= MAX_HANDLERS) return 0;
+    return transmitData;
 }
 
 byte getEPSizeOUT(byte ep){

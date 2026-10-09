@@ -80,6 +80,8 @@ respType configureHandlerTableEntry(byte handler);
 byte removeAllOpenModules(void);
 void unsetHandlerReceiveBuffer(byte handler);
 void unsetHandlerReceiveFunction(byte handler);
+/* Foreground-only shared reply storage: at most PACKET_DATA_SIZE bytes.
+ * Fill it and call USBGenWrite2 synchronously; never use it from an ISR. */
 byte* getSharedBuffer(byte handler);
 byte getEPSizeIN(byte ep);
 byte getEPSizeOUT(byte ep);

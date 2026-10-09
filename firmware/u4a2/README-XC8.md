@@ -158,3 +158,25 @@ hackpoints exige dos o tres según el comando y limita el pin a 0..7. Los comand
 rechazados no modifican salidas ni envían una respuesta de éxito. No se añade
 un código de error al protocolo; el cliente puede agotar su tiempo de espera.
 
+
+## Buffers de trabajo USB (parche 0004)
+
+Los módulos activos reciben y preparan respuestas en dos buffers de RAM de
+61 bytes. El despachador copia OUT mediante accesos volatile; USBGenWrite2 copia
+la respuesta hacia IN mediante accesos volatile y entrega la propiedad al USB
+solo al finalizar. No se eliminan calificadores mediante casts.
+
+Si IN tiene una respuesta pendiente, USBGenRead2 conserva OUT y pospone la
+invocación del módulo hasta que IN esté libre. Por tanto, una solicitud nueva
+puede esperar a que el host lea la respuesta anterior; no se ejecutan sus efectos
+mientras espera. Se preservan el formato de cabecera y los 61 bytes de carga útil.
+Solo se admite el endpoint 1, que es el único configurado por USBInitEPs.
+
+getSharedBuffer sigue devolviendo byte*, ahora a RAM de trabajo compartida.
+Su uso es síncrono desde main: preparar y enviar la respuesta dentro del callback
+Received. No es una cola ni admite productores desde ISR; los módulos opcionales
+que transmitan de forma asíncrona necesitan un diseño específico antes de activarse.
+Los dos buffers suman 122 bytes de RAM. XC8 4.00 compila y check_image valida la
+imagen; las comprobaciones locales con USB simulado verifican espera, copias y
+que preparar una respuesta no altere una transmisión pendiente. Falta comprobar
+el intercambio USB en la placa. El análisis de pila/latencia queda pendiente.
