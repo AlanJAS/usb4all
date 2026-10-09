@@ -91,6 +91,8 @@ void UserButtonRelease(byte handler) {
 void UserButtonReceived(byte* recBuffPtr, byte len, byte handler) {
     byte userButtonCounter = 0;
 
+    if (len == 0u) return;
+
     switch (((BUTTON_DATA_PACKET*) recBuffPtr)->CMD) {
         case U4A_USR_BUTTON_READ_VERSION:
             ((BUTTON_DATA_PACKET*) sendBufferUsrButton)->_byte[0] = ((BUTTON_DATA_PACKET*) recBuffPtr)->_byte[0];

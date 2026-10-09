@@ -101,6 +101,8 @@ void UserModActRelease(byte handler) {
  *****************************************************************************/
 void UserModActReceived(byte* recBuffPtr, byte len, byte handler) {
     byte userModActCounter = 0;
+    if (len == 0u) return;
+
     switch (((MODACT_DATA_PACKET*) recBuffPtr)->CMD) {
         case U4A_USR_MODACT_READ_VERSION:
             ((MODACT_DATA_PACKET*) sendBufferUsrModAct)->_byte[0] = ((MODACT_DATA_PACKET*) recBuffPtr)->_byte[0];
@@ -110,6 +112,7 @@ void UserModActReceived(byte* recBuffPtr, byte len, byte handler) {
             break;
 
         case U4A_USR_MODACT_TURN:
+            if (len < 2u) return;
             ((MODACT_DATA_PACKET*) sendBufferUsrModAct)->_byte[0] = ((MODACT_DATA_PACKET*) recBuffPtr)->_byte[0];
             if (((MODACT_DATA_PACKET*)recBuffPtr)->_byte[1] == ACT_ON) {
                 getPortDescriptor(handler)->set_data(ACT_ON);

@@ -103,6 +103,8 @@ void UserModSenRelease(byte handler) {
 void UserModSenReceived(byte* recBuffPtr, byte len, byte handler) {
     WORD data;
     byte userModSenCounter = 0;
+    if (len == 0u) return;
+
     switch (((MODSEN_DATA_PACKET*) recBuffPtr)->CMD) {
         case U4A_USR_MODSEN_READ_VERSION:
             ((MODSEN_DATA_PACKET*) sendBufferUsrModSen)->_byte[0] = ((MODSEN_DATA_PACKET*) recBuffPtr)->_byte[0];

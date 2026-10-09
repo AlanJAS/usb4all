@@ -139,3 +139,22 @@ multiplicación de 32 bits y truncamiento a ticks enteros. Para velocidades vál
 el resultado pertenece a 0..TIME_C. Las llamadas AX12 comprueban el rango antes
 de convertir la velocidad a `int`; no se cambia la API general de `endlessTurn`.
 
+
+## Validación de recepción USB (parche 0003)
+
+El despachador descarta transferencias OUT que no contengan los tres bytes de
+cabecera y al menos un byte de comando, o que superen los 64 bytes del endpoint.
+Antes de invocar el callback verifica que el handler esté dentro de la tabla,
+esté abierto y tenga una función registrada. Siempre rearma OUT tras procesar
+o descartar una transferencia; no rearma si el periférico aún es su propietario.
+Se utiliza la longitud recibida del USB, sin interpretar de otra manera los
+campos reservados/de longitud de la cabecera. Se admiten paquetes con relleno.
+Una transferencia completa de 64 bytes entrega los 61 bytes de datos al módulo
+(antes el despachador la recortaba a 63 bytes totales).
+
+Los receptores pnp, port, button, hackpoints, butia, modAct y modSen comprueban
+que exista el comando antes de leerlo. modAct exige dos bytes para TURN;
+hackpoints exige dos o tres según el comando y limita el pin a 0..7. Los comandos
+rechazados no modifican salidas ni envían una respuesta de éxito. No se añade
+un código de error al protocolo; el cliente puede agotar su tiempo de espera.
+

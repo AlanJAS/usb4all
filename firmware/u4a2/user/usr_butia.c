@@ -91,6 +91,8 @@ void UserButiaReceived(byte* recBuffPtr, byte len, byte handler){
     byte UserButiaCounter = 0;
     int data_received = 3;
 
+    if (len == 0u) return;
+
     switch(((BUTIA_DATA_PACKET*)recBuffPtr)->CMD)
     {
         case U4A_USR_BUTIA_READ_VERSION_BUTIA:

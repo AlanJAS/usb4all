@@ -100,6 +100,8 @@ void HackPointsReceived(byte* recBufferHackPoints, byte len, byte handler) {
     byte HackPointsCounter = 0;
     byte pin;
 
+    if (len == 0u) return;
+
     switch (((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->CMD) {
         case U4A_USR_HACKPOINTS_READ_VERSION:
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
@@ -109,6 +111,8 @@ void HackPointsReceived(byte* recBufferHackPoints, byte len, byte handler) {
             break;
 
         case U4A_USR_HACKPOINTS_SET_MODE:
+            if (len < 3u) return;
+            if (recBufferHackPoints[1] > 7u) return;
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             pin = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[1];
             if (((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[2] == (byte) 0){
@@ -122,6 +126,8 @@ void HackPointsReceived(byte* recBufferHackPoints, byte len, byte handler) {
             break;
 
         case U4A_USR_HACKPOINTS_WRITE:
+            if (len < 3u) return;
+            if (recBufferHackPoints[1] > 7u) return;
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             pin = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[1];
             if (((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[2] == (byte) 1){
@@ -133,6 +139,7 @@ void HackPointsReceived(byte* recBufferHackPoints, byte len, byte handler) {
             break;
 
         case U4A_USR_HACKPOINTS_SET_PORT:
+            if (len < 2u) return;
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             PORTD = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[1];
             TRISD = OUTPUT;
@@ -154,6 +161,8 @@ void HackPointsReceived(byte* recBufferHackPoints, byte len, byte handler) {
             break;
 
         case U4A_USR_HACKPOINTS_READ:
+            if (len < 2u) return;
+            if (recBufferHackPoints[1] > 7u) return;
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[0] = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[0];
             pin = ((HACK_POINTS_DATA_PACKET*) recBufferHackPoints)->_byte[1];
             ((HACK_POINTS_DATA_PACKET*) sendBufferHackPoints)->_byte[1] = (PORTD & (MASK<<pin))>>pin;

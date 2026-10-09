@@ -145,6 +145,8 @@ void hotplug_pnp(void) {
 void PNPReceived(byte* recBuffPtr, byte len, byte handler) {
     byte userPNPCounter = 0;
 
+    if (len == 0u) return;
+
     switch (((PNP_DATA_PACKET*) recBuffPtr)->CMD) {
         case U4A_PNP_READ_VERSION:
             ((PNP_DATA_PACKET*) sendBufferPNP)->_byte[0] = ((PNP_DATA_PACKET*) recBuffPtr)->_byte[0];

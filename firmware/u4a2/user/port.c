@@ -93,6 +93,8 @@ void PortRelease(byte i) {
 void PortReceived(byte* recBuffPtr, byte len, byte handler) {
     byte PortCounter = 0;
 
+    if (len == 0u) return;
+
     switch (((PORT_DATA_PACKET*) recBuffPtr)->CMD) {
         case U4A_PORT_READ_VERSION:
             //dataPacket._byte[1] is len

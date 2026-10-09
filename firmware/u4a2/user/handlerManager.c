@@ -46,36 +46,33 @@ void unsetHandlerReceiveFunction(byte handler){
 
 void USBGenRead2(void){
     byte len;
+    byte handler;
     byte ep = 1;
-    HM_DATA_PACKET_HEADER* dph;
+    volatile HM_DATA_PACKET_HEADER* dph;
 
     if((usb_device_state < CONFIGURED_STATE)||(UCONbits.SUSPND== (unsigned) 1)) return;
 
-    len = PACKET_MTU-1;
-
-    //for(ep=1;ep<=ram_max_ep_number;ep++){
-
     if(!EPOUT_IS_BUSY(ep)){
-        /*
-         * Adjust the expected number of bytes to equal
-         * the actual number of bytes received.
-         */
-        if(len > EPOUT_SIZE(ep))
-            len = EPOUT_SIZE(ep);
-        //antes de copiar el dato en el buffer tengo que mirar de que
-        //handler es y pedir el buffer de receive del modulo de usuario
-        dph = (HM_DATA_PACKET_HEADER*)EPBUFFEROUT(ep);
-        handlerReceivedFuncion[dph->handlerNumber](EPBUFFEROUT(ep)+SIZE__HM_DATA_PACKET_HEADER,len-SIZE__HM_DATA_PACKET_HEADER, dph->handlerNumber);
+        len = EPOUT_SIZE(ep);
+        /* Require the complete transport header and at least a command byte.
+         * Use the received USB length, as before; permit padded packets.
+         * Reject invalid counts rather than clipping or underflowing them. */
+        if (len > SIZE__HM_DATA_PACKET_HEADER && len <= PACKET_MTU) {
+            dph = (volatile HM_DATA_PACKET_HEADER*)EPBUFFEROUT(ep);
+            handler = dph->handlerNumber;
+            if (handler < MAX_HANDLERS && !epHandlerMap[handler].ep.empty &&
+                handlerReceivedFuncion[handler] != 0) {
+                handlerReceivedFuncion[handler](
+                    EPBUFFEROUT(ep) + SIZE__HM_DATA_PACKET_HEADER,
+                    (byte)(len - SIZE__HM_DATA_PACKET_HEADER), handler);
+            }
+        }
 
-        //Prepare dual-ram buffer for next OUT transaction
+        /* Re-arm OUT even after rejecting a packet, so reception can resume. */
         EPOUT_SIZE(ep) = getEPSizeOUT(ep);
-
-        //mUSBBufferReady(USBGEN_BD_OUT);
-
         mUSBBufferReady2(EPOUT_BDT(ep));
-
-    }//end if
-}//end USBGenRead
+    }
+}
 
 void USBGenWrite2(byte handler, byte len) {
     byte j = 255;
