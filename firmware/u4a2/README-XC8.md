@@ -27,14 +27,19 @@ Se requiere GNU Make y Python 3.9 o posterior.
 
 ```sh
 cd firmware/u4a2
-make -f Makefile.xc8 \
-  XC8=/opt/microchip/xc8/v4.00/bin/xc8-cc \
-  DFP=/opt/microchip/mplabx/v6.35/packs/Microchip/PIC18Fxxxx_DFP/1.7.171/xc8
+make
 ```
 
-`DFP` es la carpeta **xc8 dentro del pack**, no el archivo `.atpack` ni la raíz
-del pack. Si `xc8-cc` está en PATH, se puede omitir `XC8`. La ruta de instalación
-es configurable; no hay rutas de esta sesión dentro del Makefile.
+Las rutas predeterminadas son:
+
+- `XC8=/opt/microchip/xc8/v4.00/bin/xc8-cc`
+- `DFP=/opt/microchip/mplabx/v6.35/packs/Microchip/PIC18Fxxxx_DFP/1.7.171/xc8`
+
+Se pueden sobrescribir con `make XC8=/otra/ruta/xc8-cc DFP=/otra/ruta/xc8`.
+Si el compilador está en PATH, usa `make XC8=xc8-cc`. `DFP` es la carpeta
+**xc8 dentro del pack**, no el archivo `.atpack` ni la raíz del pack.
+El archivo `Makefile` incluye `Makefile.xc8`; los comandos antiguos con
+`make -f Makefile.xc8` siguen funcionando.
 
 El objetivo predeterminado compila y comprueba el HEX. Genera:
 
@@ -42,8 +47,8 @@ El objetivo predeterminado compila y comprueba el HEX. Genera:
 - `build/xc8/usb4all2.elf`, `.map`, `.sym` y ensamblador generado: inspección.
 
 ```sh
-make -f Makefile.xc8 check XC8=/ruta/xc8-cc DFP=/ruta/del/pack/xc8
-make -f Makefile.xc8 clean
+make check
+make clean
 ```
 ## Decisiones de migración
 
