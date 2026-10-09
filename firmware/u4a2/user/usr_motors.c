@@ -424,7 +424,7 @@ void UserMotorsRelease(byte handler) {
  *****************************************************************************/
 void UserMotorsReceived(byte* recBuffPtr, byte len, byte handler) {
     byte userMotorsCounter = 0;
-    byte lowVel1, lowVel2, highVel1, highVel2, idmotor, highV,lowV;
+    byte lowVel1, lowVel2, highVel1, highVel2, idmotor;
     if (len == 0) return;
     switch (((MOTORS_DATA_PACKET*) recBuffPtr)->CMD) {
 

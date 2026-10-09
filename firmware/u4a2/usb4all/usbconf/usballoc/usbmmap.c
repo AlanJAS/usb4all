@@ -105,8 +105,6 @@ volatile byte ep2_in_buffer[USBGEN_EP_SIZE];
 volatile byte ep3_out_buffer[USBGEN_EP_SIZE];
 volatile byte ep3_in_buffer[USBGEN_EP_SIZE];*/
 
-//defino el ROM_MAX_EP_NUMBER igual al define MAX_EP_NUMBER
-const unsigned char ROM_MAX_EP_NUMBER=MAX_EP_NUMBER;
 
 #define USBGEN_UEP              UEP1
 #define BOOT_UEP                UEP1 //uso endpoint 2 para bootloader

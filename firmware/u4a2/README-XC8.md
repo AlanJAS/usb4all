@@ -23,7 +23,7 @@ No debe reutilizarse el `.lkr` de C18 en un enlace XC8.
 
 Herramientas verificadas: MPLAB XC8 **4.00** Free para Linux y
 Microchip **PIC18Fxxxx_DFP 1.7.171**. El compilador y el DFP no se redistribuyen.
-Se requiere GNU Make y Python 3.9 o posterior. Para los tests de host, GCC/Clang.
+Se requiere GNU Make y Python 3.9 o posterior.
 
 ```sh
 cd firmware/u4a2
@@ -42,7 +42,7 @@ El objetivo predeterminado compila y comprueba el HEX. Genera:
 - `build/xc8/usb4all2.elf`, `.map`, `.sym` y ensamblador generado: inspección.
 
 ```sh
-make -f Makefile.xc8 test XC8=/ruta/xc8-cc DFP=/ruta/del/pack/xc8
+make -f Makefile.xc8 check XC8=/ruta/xc8-cc DFP=/ruta/del/pack/xc8
 make -f Makefile.xc8 clean
 ```
 ## Decisiones de migración
@@ -89,12 +89,11 @@ usan los tamaños de estructuras del PC para validar el ABI del PIC.
 `xc8/check_image.py` verifica checksum Intel HEX, rango exclusivo
 `0x08C0..0x7FFF`, destinos de vectores, símbolos de RAM USB, contenido de los
 principales descriptores y que las pilas reservadas no se solapen con los buffers.
-Los tests negativos comprueban que se rechacen imágenes con regiones protegidas,
-vectores, descriptores o símbolos alterados. El test C de host ejecuta el loader
-real con descriptores de prueba: listado, búsquedas, callbacks y entradas inválidas.
+Los tests de host se retiraron del repositorio; el objetivo `check` sigue
+comprobando el HEX y los símbolos generados por XC8.
 
-La compilación verificada ocupa **23 697 bytes de programa (77,6 % del espacio
-posterior al bootloader)** y **538 bytes de datos**. Además reserva **696 bytes de
+La compilación verificada ocupa **22 175 bytes de programa (72,6 % del espacio
+posterior al bootloader)** y **660 bytes de datos**. Además reserva **696 bytes de
 pila de software**, repartidos en 348 para main y 348 para la interrupción alta.
 El «100 %» de pila del resumen del compilador indica memoria reservada, **no una
 medición del máximo uso durante la ejecución**.
@@ -103,8 +102,8 @@ XC8 emite el warning **1393**, porque no puede acotar la profundidad de la pila
 hardware en el grafo de llamadas indirectas, y el aviso **2223** por el contexto
 amplio del ISR. No se silencian. No se ha demostrado un límite de pila en ejecución;
 es necesario medir margen de pila y latencia bajo carga antes de uso operativo.
-Quedan también advertencias heredadas de conversiones numéricas, código no usado
-y casts de buffers USB. El registro de compilación acompaña la entrega.
+Quedan avisos de funciones y parámetros no usados y expresiones optimizadas.
+Las conversiones numéricas y la pérdida de volatile en buffers USB están resueltas.
 
 Para incorporar un módulo opcional: migrar sus dependencias C18, prefijar comandos,
 conservar layouts de paquetes, añadir su `.c` a `SOURCES`, su descriptor al final
@@ -180,3 +179,12 @@ Los dos buffers suman 122 bytes de RAM. XC8 4.00 compila y check_image valida la
 imagen; las comprobaciones locales con USB simulado verifican espera, copias y
 que preparar una respuesta no altere una transmisión pendiente. Falta comprobar
 el intercambio USB en la placa. El análisis de pila/latencia queda pendiente.
+
+## Limpieza de avisos y objetivos (parche 0005)
+
+Se eliminan las globales sin uso ram_max_ep_number y hmDataPacketHeader, la
+asignación muerta a ram_max_ep_number, su constante ROM_MAX_EP_NUMBER y los
+locales highV/lowV de motores.
+Se retiran las recetas de tests cuyos archivos ya no están en la rama. Para
+compilar y validar el HEX se usa `make -f Makefile.xc8 check` (también es el objetivo
+predeterminado). No se suprimen warnings mediante opciones del compilador.

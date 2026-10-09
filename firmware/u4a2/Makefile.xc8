@@ -2,7 +2,6 @@
 XC8 ?= xc8-cc
 BUILD ?= build/xc8
 PYTHON ?= python3
-HOST_CC ?= cc
 SOURCES := xc8/low_vector.S xc8/layout_checks.c \
    usb4all/proxys/T0Service.c \
   user/adminModule.c \
@@ -34,7 +33,7 @@ ifneq ($(strip $(DFP)),)
 FLAGS += -mdfp="$(DFP)"
 endif
 .DELETE_ON_ERROR:
-.PHONY: all clean check test
+.PHONY: all clean check
 all: check
 HEADERS := $(wildcard *.h system/*.h system/usb/*/*.h usb4all/*/*.h usb4all/usbconf/*/*.h user/*.h)
 $(BUILD)/usb4all2.hex: $(SOURCES) $(HEADERS) Makefile.xc8
@@ -42,11 +41,5 @@ $(BUILD)/usb4all2.hex: $(SOURCES) $(HEADERS) Makefile.xc8
 	"$(XC8)" $(FLAGS) $(INCLUDES) $(SOURCES) -Wl,-Map=$(BUILD)/usb4all2.map -o $@
 check: $(BUILD)/usb4all2.hex
 	$(PYTHON) xc8/check_image.py $< $(BUILD)/usb4all2.sym
-$(BUILD)/test_registry: xc8/tests/test_registry.c user/loaderModule.c user/loaderModule.h user/module_registry.h system/typedefs.h
-	mkdir -p $(BUILD)
-	$(HOST_CC) -std=c99 -Wall -Wextra -Werror -I. xc8/tests/test_registry.c user/loaderModule.c -o $@
-test: check $(BUILD)/test_registry
-	$(BUILD)/test_registry
-	$(PYTHON) xc8/tests/test_image.py $(BUILD)/usb4all2
 clean:
 	rm -rf $(BUILD)

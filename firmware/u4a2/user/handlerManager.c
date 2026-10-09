@@ -17,9 +17,7 @@
 #include "usr_motors.h"
 
 /** V A R I A B L E S ********************************************************/
-unsigned char ram_max_ep_number;
 epHandlerMapItem epHandlerMap[MAX_HANDLERS];
-HM_DATA_PACKET_HEADER hmDataPacketHeader;
 byte* HandlerReceiveBuffer[MAX_HANDLERS];
 void (*handlerReceivedFuncion[MAX_HANDLERS]) (byte*, byte, byte); //arreglo de punteros a las funcioens received de los modulos
 HANDLER_OPTYPE hn_opType;
@@ -166,8 +164,6 @@ void initHandlerTable() {
         epHandlerMap[i].ep.empty = 1;
         epHandlerMap[i].uTableDirection = 0;
     }
-    //cargo el ROM_MAX_EP_NUMBER en ram
-    ram_max_ep_number = ROM_MAX_EP_NUMBER;
 }
 
 void initHandlerManager(void){

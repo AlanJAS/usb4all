@@ -106,7 +106,6 @@ extern byte usb_active_cfg;
 extern byte usb_alt_intf[MAX_NUM_INT];
 //extern byte epOutSize[MAX_EP_NUMBER];
 //extern byte epInSize[MAX_EP_NUMBER];
-extern const unsigned char ROM_MAX_EP_NUMBER;
 
 extern volatile BDT ep0Bo;          //Endpoint #0 BD Out
 extern volatile BDT ep0Bi;          //Endpoint #0 BD In
