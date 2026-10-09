@@ -296,7 +296,7 @@ USB_CHECK(usb_word_size, sizeof(word) == 2);
 USB_CHECK(usb_dword_size, sizeof(dword) == 4);
 USB_CHECK(usb_bd_stat_size, sizeof(BD_STAT) == 1);
 USB_CHECK(usb_bd_size, sizeof(BDT) == 4);
-USB_CHECK(usb_bd_address_offset, offsetof(BDT, ADR) == 2);
+USB_CHECK(usb_bd_address_offset, BOOT_OFFSETOF(BDT, ADR) == 2);
 USB_CHECK(usb_bd_address_size, sizeof(((BDT *)0)->ADR) == 2);
 USB_CHECK(usb_setup_size, sizeof(CTRL_TRF_SETUP) == 8);
 USB_CHECK(usb_control_size, sizeof(CTRL_TRF_DATA) == 8);

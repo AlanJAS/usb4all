@@ -167,6 +167,13 @@
 
 #include <stddef.h>
 
+/* XC8's library offsetof is not an integer constant expression here. */
+#if defined(__XC8)
+#define BOOT_OFFSETOF(type, member) __builtin_offsetof(type, member)
+#else
+#define BOOT_OFFSETOF(type, member) offsetof(type, member)
+#endif
+
 #define OVER_HEAD 5
 #define DATA_SIZE (BOOT_EP_SIZE - OVER_HEAD)
 
@@ -213,13 +220,13 @@ typedef union _BOOT_DATA_PACKET
 #define BOOT_CHECK(name, condition) typedef char name[(condition) ? 1 : -1]
 BOOT_CHECK(boot_packet_size, sizeof(BOOT_DATA_PACKET) == 64);
 BOOT_CHECK(boot_command_size, sizeof(((BOOT_DATA_PACKET *)0)->CMD) == 1);
-BOOT_CHECK(boot_command_offset, offsetof(BOOT_DATA_PACKET, CMD) == 0);
-BOOT_CHECK(boot_length_offset, offsetof(BOOT_DATA_PACKET, len) == 1);
+BOOT_CHECK(boot_command_offset, BOOT_OFFSETOF(BOOT_DATA_PACKET, CMD) == 0);
+BOOT_CHECK(boot_length_offset, BOOT_OFFSETOF(BOOT_DATA_PACKET, len) == 1);
 BOOT_CHECK(boot_address_size, sizeof(((BOOT_DATA_PACKET *)0)->ADR) == 3);
-BOOT_CHECK(boot_address_offset, offsetof(BOOT_DATA_PACKET, ADR) == 2);
-BOOT_CHECK(boot_data_offset, offsetof(BOOT_DATA_PACKET, data) == OVER_HEAD);
-BOOT_CHECK(boot_led_number_offset, offsetof(BOOT_DATA_PACKET, led_num) == 1);
-BOOT_CHECK(boot_led_status_offset, offsetof(BOOT_DATA_PACKET, led_status) == 2);
+BOOT_CHECK(boot_address_offset, BOOT_OFFSETOF(BOOT_DATA_PACKET, ADR) == 2);
+BOOT_CHECK(boot_data_offset, BOOT_OFFSETOF(BOOT_DATA_PACKET, data) == OVER_HEAD);
+BOOT_CHECK(boot_led_number_offset, BOOT_OFFSETOF(BOOT_DATA_PACKET, led_num) == 1);
+BOOT_CHECK(boot_led_status_offset, BOOT_OFFSETOF(BOOT_DATA_PACKET, led_status) == 2);
 #undef BOOT_CHECK
 
 /** E X T E R N S ************************************************************/

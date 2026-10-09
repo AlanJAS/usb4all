@@ -299,7 +299,7 @@ void USBCtrlTrfTxService(void)
      * First, have to figure out how many byte of data to send.
      */
     if(wCount._word < EP0_BUFF_SIZE)
-        byte_to_send = wCount._word;
+        byte_to_send = (byte)wCount._word;
     else
         byte_to_send = EP0_BUFF_SIZE;
     
