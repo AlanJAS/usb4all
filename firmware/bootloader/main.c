@@ -42,7 +42,11 @@ with the PIC18F87J50 Family of microcontrollers.
 
 
 /** I N C L U D E S **********************************************************/
+#if defined(__XC8)
+#include <xc.h>
+#else
 #include <p18cxxx.h>
+#endif
 #include "typedefs.h"                        // Required
 #include "usb.h"                         // Required
 #include "io_cfg.h"                                 // Required
@@ -50,7 +54,7 @@ with the PIC18F87J50 Family of microcontrollers.
 #include "usb_compile_time_validation.h" // Optional
 /** C O N F I G U R A T I O N ************************************************/
 
-#if   defined(__18F4550)||defined(__18F4455)|| \
+#if   defined(BOOT_XC8)||defined(__18F4550)||defined(__18F4455)|| \
       defined(__18F2550)||defined(__18F2455)|| \
       defined(__18F4553)||defined(__18F4458)|| \
       defined(__18F2553)||defined(__18F2458)
@@ -101,12 +105,15 @@ with the PIC18F87J50 Family of microcontrollers.
 #endif
 
 /** V A R I A B L E S ********************************************************/
+#if !defined(__XC8)
 #pragma udata
+#endif
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 
 /** V E C T O R  R E M A P P I N G *******************************************/
 
+#if !defined(__XC8)
 #pragma code _HIGH_INTERRUPT_VECTOR = 0x000008
 void _high_ISR (void)
 {
@@ -121,8 +128,12 @@ void _low_ISR (void)
 
 #pragma code
 
+#endif /* XC8 vectors are in boot_vectors.S. */
+
 /** D E C L A R A T I O N S **************************************************/
+#if !defined(__XC8)
 #pragma code
+#endif
 
 /******************************************************************************
  * Function:        void main(void)
@@ -174,7 +185,11 @@ void main(void)
 		LATBbits.LATB6 = 0;
 */
         ADCON1 = temp;          // Restore reset value
+#if defined(__XC8)
+        asm("goto 0x08C0"); /* RM_RESET_VECTOR; no C call/return. */
+#else
         _asm goto RM_RESET_VECTOR _endasm
+#endif
     }//end if
     
     //Bootload Mode
@@ -187,6 +202,8 @@ void main(void)
     }//end while
 }//end main
 
+#if !defined(__XC8)
 #pragma code user = RM_RESET_VECTOR
+#endif
 
 /** EOF main.c ***************************************************************/

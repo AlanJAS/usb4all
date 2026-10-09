@@ -47,13 +47,19 @@
 
 
 /** I N C L U D E S **********************************************************/
+#if defined(__XC8)
+#include <xc.h>
+#else
 #include <p18cxxx.h>
+#endif
 #include "typedefs.h"
 #include "usb.h"
 #include "io_cfg.h"             // Required for USBCheckBusStatus()
 
 /** V A R I A B L E S ********************************************************/
+#if !defined(__XC8)
 #pragma udata
+#endif
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 void USBModuleEnable(void);
@@ -68,7 +74,9 @@ void USBStallHandler(void);
 void USBErrorHandler(void);
 
 /** D E C L A R A T I O N S **************************************************/
+#if !defined(__XC8)
 #pragma code
+#endif
 /******************************************************************************
  * Function:        void USBCheckBusStatus(void)
  *
@@ -170,7 +178,7 @@ PLL to lock.
         /* Now, go into power saving */
         PIR2bits.USBIF = 0;                     // Added May 14, 2007
         PIE2bits.USBIE = 1;                     // Set wakeup source
-        Sleep();
+        BootSleep();
         PIR2bits.USBIF = 0;
     }//end if
     
@@ -274,8 +282,8 @@ TRNIF. If no additional data is preset, TRNIF will remain clear.
 Additional nops were added in this fix to guarantee that TRNIF is
 properly updated before being checked again.
 ********************************************************************/
-        Nop(); Nop(); Nop();
-        Nop(); Nop(); Nop();
+        BootNop(); BootNop(); BootNop();
+        BootNop(); BootNop(); BootNop();
     }
     UCONbits.PKTDIS = 0;            // Make sure packet processing is enabled
     USBPrepareForNextSetupTrf();    // Declared in usbctrltrf.c

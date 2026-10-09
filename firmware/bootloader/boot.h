@@ -43,7 +43,12 @@
 /** D E F I N I T I O N S ****************************************************/
 /****** Compiler Specific Definitions *******************************/
 
-#if defined(HI_TECH_C)
+#if defined(__XC8)
+    #define BOOT_XC8
+    #if !defined(_18F4550) && !defined(__18F4550)
+    #error "XC8 bootloader target must be PIC18F4550."
+    #endif
+#elif defined(HI_TECH_C)
     #define HITECH_C18
 #else
     #define MCHP_C18
@@ -53,18 +58,18 @@
 #error "Invalid Compiler selection."
 #endif
 
-#if !defined(MCHP_C18) && !defined(HITECH_C18)
+#if !defined(MCHP_C18) && !defined(HITECH_C18) && !defined(BOOT_XC8)
 #error "Compiler not supported."
 #endif
 
-#if defined(MCHP_C18)
+#if defined(MCHP_C18) || defined(BOOT_XC8)
     #define EECON1_RD       EECON1bits.RD
     #define EECON1_WR       EECON1bits.WR
 #endif
 
 /****** Processor Specific Definitions ******************************/
 
-#if defined(__18F2455)||defined(__18F2550)|| \
+#if defined(BOOT_XC8)||defined(__18F2455)||defined(__18F2550)|| \
     defined(__18F4455)||defined(__18F4550)|| \
     defined(__18F2458)||defined(__18F2553)|| \
     defined(__18F4458)||defined(__18F4553)

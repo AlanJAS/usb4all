@@ -46,16 +46,26 @@
 
 /** D E F I N I T I O N S *******************************************/
 
-#define CFG01 rom struct                            \
-{   USB_CFG_DSC             cd01;                   \
-    USB_INTF_DSC            i00a00;                 \
-    USB_EP_DSC              ep01o_i00a00;           \
-    USB_EP_DSC              ep01i_i00a00;           \
-} cfg01
+typedef struct
+{
+    USB_CFG_DSC cd01;
+    USB_INTF_DSC i00a00;
+    USB_EP_DSC ep01o_i00a00;
+    USB_EP_DSC ep01i_i00a00;
+} BOOT_CFG_DSC;
+
+#define CFG01 BOOT_ROM BOOT_CFG_DSC cfg01
+
+typedef struct
+{
+    byte bLength;
+    byte bDscType;
+    word string[1];
+} BOOT_LANG_DSC;
 
 /** E X T E R N S ***************************************************/
-extern rom USB_DEV_DSC device_dsc;
+extern BOOT_ROM USB_DEV_DSC device_dsc;
 extern CFG01;
-extern rom struct{byte bLength;byte bDscType;word string[1];}sd000;
+extern BOOT_ROM BOOT_LANG_DSC sd000;
 
 #endif //USBDSC_H

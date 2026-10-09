@@ -63,7 +63,9 @@
 #endif
 
 /** V A R I A B L E S ********************************************************/
+#if !defined(__XC8)
 #pragma udata
+#endif
 byte counter;
 byte trf_state;
 
@@ -73,7 +75,9 @@ word big_counter;
 void BlinkUSBStatus(void);
 
 /** D E C L A R A T I O N S **************************************************/
+#if !defined(__XC8)
 #pragma code
+#endif
 
 /** C L A S S  S P E C I F I C  R E Q ****************************************/
 
@@ -328,7 +332,7 @@ void BootService(void)
                 big_counter = 0;
                 while(--big_counter);
                 
-                Reset();
+                BootReset();
                 break;
             
             case UPDATE_LED:

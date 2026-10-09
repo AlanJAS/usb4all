@@ -37,6 +37,22 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+#if defined(__XC8)
+#define BOOT_ROM const
+#define BOOT_FAR
+#define BOOT_USB_AT(address) __at(address)
+#define BootReset() asm("reset")
+#define BootSleep() asm("sleep")
+#define BootNop() asm("nop")
+#else
+#define BOOT_ROM rom
+#define BOOT_FAR far
+#define BOOT_USB_AT(address)
+#define BootReset() Reset()
+#define BootSleep() Sleep()
+#define BootNop() Nop()
+#endif
+
 typedef unsigned char   byte;           // 8-bit
 typedef unsigned int    word;           // 16-bit
 typedef unsigned long   dword;          // 32-bit
@@ -46,14 +62,14 @@ typedef union _BYTE
     byte _byte;
     struct
     {
-        unsigned b0:1;
-        unsigned b1:1;
-        unsigned b2:1;
-        unsigned b3:1;
-        unsigned b4:1;
-        unsigned b5:1;
-        unsigned b6:1;
-        unsigned b7:1;
+        unsigned char b0:1;
+        unsigned char b1:1;
+        unsigned char b2:1;
+        unsigned char b3:1;
+        unsigned char b4:1;
+        unsigned char b5:1;
+        unsigned char b6:1;
+        unsigned char b7:1;
     };
 } BYTE;
 
@@ -139,8 +155,8 @@ typedef union _POINTER
     word* wRam;                         // Ram word poitner: 2 bytes poitner pointing
                                         // to 2 bytes of data
 
-    rom byte* bRom;                     // Size depends on compiler setting
-    rom word* wRom;
+    BOOT_ROM byte* bRom;                     // Size depends on compiler setting
+    BOOT_ROM word* wRom;
     //rom near byte* nbRom;               // Near = 2 bytes pointer
     //rom near word* nwRom;
     //rom far byte* fbRom;                // Far = 3 bytes pointer

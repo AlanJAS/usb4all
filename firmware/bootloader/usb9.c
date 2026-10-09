@@ -44,13 +44,19 @@
  *****************************************************************************/
 
 /** I N C L U D E S **********************************************************/
+#if defined(__XC8)
+#include <xc.h>
+#else
 #include <p18cxxx.h>
+#endif
 #include "typedefs.h"
 #include "usb.h"
 #include "io_cfg.h"                     // Required for self_power status
 
 /** V A R I A B L E S ********************************************************/
+#if !defined(__XC8)
 #pragma udata
+#endif
 
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 void USBStdGetDscHandler(void);
@@ -59,7 +65,9 @@ void USBStdGetStatusHandler(void);
 void USBStdFeatureReqHandler(void);
 
 /** D E C L A R A T I O N S **************************************************/
+#if !defined(__XC8)
 #pragma code
+#endif
 /******************************************************************************
  * Function:        void USBCheckStdRequest(void)
  *
@@ -91,17 +99,17 @@ void USBCheckStdRequest(void)
             ctrl_trf_session_owner = MUID_USB9;
             if(SetupPkt.bDscType == DSC_DEV)
             {
-                pSrc.bRom = (rom byte*)&device_dsc;
+                pSrc.bRom = (BOOT_ROM byte*)&device_dsc;
                 wCount._word = sizeof(device_dsc);  // Set data count
             }
             else if(SetupPkt.bDscType == DSC_CFG)
             {
-                pSrc.bRom = (rom byte*)&cfg01;
+                pSrc.bRom = (BOOT_ROM byte*)&cfg01;
                 wCount._word = sizeof(cfg01);       // Set data count
             }
             else if(SetupPkt.bDscType == DSC_STR)
             {
-                pSrc.bRom = (rom byte*)&sd000;
+                pSrc.bRom = (BOOT_ROM byte*)&sd000;
                 wCount._word = sizeof(sd000);       // Set data count
             }
             else
@@ -171,7 +179,7 @@ void USBCheckStdRequest(void)
 //        {
 //            case DSC_DEV:
 //                ctrl_trf_session_owner = MUID_USB9;
-//                pSrc.bRom = (rom byte*)&device_dsc;
+//                pSrc.bRom = (BOOT_ROM byte*)&device_dsc;
 //                wCount._word = sizeof(device_dsc);          // Set data count
 //                break;
 //            case DSC_CFG:

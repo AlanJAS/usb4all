@@ -174,10 +174,12 @@
 #include "usb.h"
 
 /** C O N S T A N T S ************************************************/
+#if !defined(__XC8)
 #pragma romdata
+#endif
 
 /* Device Descriptor */
-rom USB_DEV_DSC device_dsc=
+BOOT_ROM USB_DEV_DSC device_dsc=
 {    
     sizeof(USB_DEV_DSC),    // Size of this descriptor in bytes
     DSC_DEV,                // DEVICE descriptor type
@@ -224,9 +226,11 @@ CFG01=
     sizeof(USB_EP_DSC),DSC_EP,_EP01_IN,_BULK,BOOT_EP_SIZE,0x00
 };
 
-rom struct{byte bLength;byte bDscType;word string[1];}sd000={
+BOOT_ROM BOOT_LANG_DSC sd000={
 sizeof(sd000),DSC_STR,0x0409};
 
+#if !defined(__XC8)
 #pragma code
+#endif
 
 /** EOF usbdsc.c ****************************************************/

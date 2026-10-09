@@ -75,91 +75,91 @@ typedef union _CTRL_TRF_SETUP
     };
     struct
     {
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
         WORD W_Value;
         WORD W_Index;
         WORD W_Length;
     };
     struct
     {
-        unsigned Recipient:5;           //Device,Interface,Endpoint,Other
-        unsigned RequestType:2;         //Standard,Class,Vendor,Reserved
-        unsigned DataDir:1;             //Host-to-device,Device-to-host
-        unsigned :8;
+        unsigned char Recipient:5;           //Device,Interface,Endpoint,Other
+        unsigned char RequestType:2;         //Standard,Class,Vendor,Reserved
+        unsigned char DataDir:1;             //Host-to-device,Device-to-host
+        unsigned char :8;
         byte bFeature;                  //DEVICE_REMOTE_WAKEUP,ENDPOINT_HALT
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
     };
     struct
     {
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
         byte bDscIndex;                 //For Configuration and String DSC Only
         byte bDscType;                  //Device,Configuration,String
         word wLangID;                   //Language ID
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
     };
     struct
     {
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
         BYTE bDevADR;                   //Device Address 0-127
         byte bDevADRH;                  //Must equal zero
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
     };
     struct
     {
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
         byte bCfgValue;                 //Configuration Value 0-255
         byte bCfgRSD;                   //Must equal zero (Reserved)
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
     };
     struct
     {
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
         byte bAltID;                    //Alternate Setting Value 0-255
         byte bAltID_H;                  //Must equal zero
         byte bIntfID;                   //Interface Number Value 0-255
         byte bIntfID_H;                 //Must equal zero
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
     };
     struct
     {
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
         byte bEPID;                     //Endpoint ID (Number & Direction)
         byte bEPID_H;                   //Must equal zero
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
     };
     struct
     {
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
-        unsigned EPNum:4;               //Endpoint Number 0-15
-        unsigned :3;
-        unsigned EPDir:1;               //Endpoint Direction: 0-OUT, 1-IN
-        unsigned :8;
-        unsigned :8;
-        unsigned :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char EPNum:4;               //Endpoint Number 0-15
+        unsigned char :3;
+        unsigned char EPDir:1;               //Endpoint Direction: 0-OUT, 1-IN
+        unsigned char :8;
+        unsigned char :8;
+        unsigned char :8;
     };
     /** End: Standard Device Requests ****************************************/
     

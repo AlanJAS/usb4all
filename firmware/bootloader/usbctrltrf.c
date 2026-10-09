@@ -61,12 +61,18 @@
  *****************************************************************************/
 
 /** I N C L U D E S **********************************************************/
+#if defined(__XC8)
+#include <xc.h>
+#else
 #include <p18cxxx.h>
+#endif
 #include "typedefs.h"
 #include "usb.h"
 
 /** V A R I A B L E S ********************************************************/
+#if !defined(__XC8)
 #pragma udata
+#endif
 byte ctrl_trf_state;                // Control Transfer State
 byte ctrl_trf_session_owner;        // Current transfer session owner
 
@@ -80,7 +86,9 @@ void USBCtrlTrfOutHandler(void);
 void USBCtrlTrfInHandler(void);
 
 /** D E C L A R A T I O N S **************************************************/
+#if !defined(__XC8)
 #pragma code
+#endif
 /******************************************************************************
  * Function:        void USBCtrlEPService(void)
  *

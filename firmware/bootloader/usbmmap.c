@@ -48,7 +48,7 @@
  * The BDT for endpoint 1 out is located at address 0x408 to 0x40B.
  * and so on... The above allocation assumes the Ping-Pong Buffer Mode 0 is
  * used. These locations are already hard-wired in the silicon. The point
- * of doing instantiation, i.e. volatile far BDT ep0Bo;, is to provide the
+ * of doing instantiation, i.e. volatile BOOT_FAR BDT ep0Bo BOOT_USB_AT(0x400);, is to provide the
  * C compiler a way to address each variable directly. This is very important
  * because when a register can be accessed directly, it saves execution time
  * and reduces program size.
@@ -121,7 +121,7 @@
  * The endpoint buffer for each USB function must be located in the
  * dual-port RAM area and has to come after all the BDTs have been
  * instantiated. An example declaration is:
- * volatile far unsigned char[FOO_EP_SIZE] data;
+ * volatile BOOT_FAR unsigned char[FOO_EP_SIZE] data;
  *
  * The 'volatile' keyword tells the compiler not to perform any code
  * optimization on this variable because its content could be modified
@@ -130,7 +130,7 @@
  *
  * For the variable to be globally accessible by other files, it should be
  * declared in the header file usbmmap.h as an extern definition, such as
- * extern volatile far unsigned char[FOO_EP_SIZE] data;
+ * extern volatile BOOT_FAR unsigned char[FOO_EP_SIZE] data;
  *
  * Conclusion:
  * In a short summary, the dependencies between usbcfg and usbmmap can
@@ -153,7 +153,9 @@
 #include "usb.h"
 
 /** U S B  G L O B A L  V A R I A B L E S ************************************/
+#if !defined(__XC8)
 #pragma udata
+#endif
 byte usb_device_state;          // Device States: DETACHED, ATTACHED, ...
 USB_DEVICE_STATUS usb_stat;     // Global USB flags
 byte usb_active_cfg;            // Value of current configuration
@@ -161,7 +163,9 @@ byte usb_alt_intf[MAX_NUM_INT]; // Array to keep track of the current alternate
                                 // setting for each interface ID
 
 /** U S B  F I X E D  L O C A T I O N  V A R I A B L E S *********************/
+#if !defined(__XC8)
 #pragma udata usbram4=0x400     //See Linker Script,usb4:0x400-0x4FF(256-byte)
+#endif
 
 /******************************************************************************
  * Section A: Buffer Descriptor Table
@@ -171,83 +175,83 @@ byte usb_alt_intf[MAX_NUM_INT]; // Array to keep track of the current alternate
  *****************************************************************************/
 
 #if(0 <= MAX_EP_NUMBER)
-volatile far BDT ep0Bo;         //Endpoint #0 BD Out
-volatile far BDT ep0Bi;         //Endpoint #0 BD In
+volatile BOOT_FAR BDT ep0Bo BOOT_USB_AT(0x400);         //Endpoint #0 BD Out
+volatile BOOT_FAR BDT ep0Bi BOOT_USB_AT(0x404);         //Endpoint #0 BD In
 #endif
 
 #if(1 <= MAX_EP_NUMBER)
-volatile far BDT ep1Bo;         //Endpoint #1 BD Out
-volatile far BDT ep1Bi;         //Endpoint #1 BD In
+volatile BOOT_FAR BDT ep1Bo BOOT_USB_AT(0x408);         //Endpoint #1 BD Out
+volatile BOOT_FAR BDT ep1Bi BOOT_USB_AT(0x40C);         //Endpoint #1 BD In
 #endif
 
 #if(2 <= MAX_EP_NUMBER)
-volatile far BDT ep2Bo;         //Endpoint #2 BD Out
-volatile far BDT ep2Bi;         //Endpoint #2 BD In
+volatile BOOT_FAR BDT ep2Bo BOOT_USB_AT(0x410);         //Endpoint #2 BD Out
+volatile BOOT_FAR BDT ep2Bi BOOT_USB_AT(0x414);         //Endpoint #2 BD In
 #endif
 
 #if(3 <= MAX_EP_NUMBER)
-volatile far BDT ep3Bo;         //Endpoint #3 BD Out
-volatile far BDT ep3Bi;         //Endpoint #3 BD In
+volatile BOOT_FAR BDT ep3Bo BOOT_USB_AT(0x418);         //Endpoint #3 BD Out
+volatile BOOT_FAR BDT ep3Bi BOOT_USB_AT(0x41C);         //Endpoint #3 BD In
 #endif
 
 #if(4 <= MAX_EP_NUMBER)
-volatile far BDT ep4Bo;         //Endpoint #4 BD Out
-volatile far BDT ep4Bi;         //Endpoint #4 BD In
+volatile BOOT_FAR BDT ep4Bo BOOT_USB_AT(0x420);         //Endpoint #4 BD Out
+volatile BOOT_FAR BDT ep4Bi BOOT_USB_AT(0x424);         //Endpoint #4 BD In
 #endif
 
 #if(5 <= MAX_EP_NUMBER)
-volatile far BDT ep5Bo;         //Endpoint #5 BD Out
-volatile far BDT ep5Bi;         //Endpoint #5 BD In
+volatile BOOT_FAR BDT ep5Bo BOOT_USB_AT(0x428);         //Endpoint #5 BD Out
+volatile BOOT_FAR BDT ep5Bi BOOT_USB_AT(0x42C);         //Endpoint #5 BD In
 #endif
 
 #if(6 <= MAX_EP_NUMBER)
-volatile far BDT ep6Bo;         //Endpoint #6 BD Out
-volatile far BDT ep6Bi;         //Endpoint #6 BD In
+volatile BOOT_FAR BDT ep6Bo BOOT_USB_AT(0x430);         //Endpoint #6 BD Out
+volatile BOOT_FAR BDT ep6Bi BOOT_USB_AT(0x434);         //Endpoint #6 BD In
 #endif
 
 #if(7 <= MAX_EP_NUMBER)
-volatile far BDT ep7Bo;         //Endpoint #7 BD Out
-volatile far BDT ep7Bi;         //Endpoint #7 BD In
+volatile BOOT_FAR BDT ep7Bo BOOT_USB_AT(0x438);         //Endpoint #7 BD Out
+volatile BOOT_FAR BDT ep7Bi BOOT_USB_AT(0x43C);         //Endpoint #7 BD In
 #endif
 
 #if(8 <= MAX_EP_NUMBER)
-volatile far BDT ep8Bo;         //Endpoint #8 BD Out
-volatile far BDT ep8Bi;         //Endpoint #8 BD In
+volatile BOOT_FAR BDT ep8Bo BOOT_USB_AT(0x440);         //Endpoint #8 BD Out
+volatile BOOT_FAR BDT ep8Bi BOOT_USB_AT(0x444);         //Endpoint #8 BD In
 #endif
 
 #if(9 <= MAX_EP_NUMBER)
-volatile far BDT ep9Bo;         //Endpoint #9 BD Out
-volatile far BDT ep9Bi;         //Endpoint #9 BD In
+volatile BOOT_FAR BDT ep9Bo BOOT_USB_AT(0x448);         //Endpoint #9 BD Out
+volatile BOOT_FAR BDT ep9Bi BOOT_USB_AT(0x44C);         //Endpoint #9 BD In
 #endif
 
 #if(10 <= MAX_EP_NUMBER)
-volatile far BDT ep10Bo;        //Endpoint #10 BD Out
-volatile far BDT ep10Bi;        //Endpoint #10 BD In
+volatile BOOT_FAR BDT ep10Bo BOOT_USB_AT(0x450);        //Endpoint #10 BD Out
+volatile BOOT_FAR BDT ep10Bi BOOT_USB_AT(0x454);        //Endpoint #10 BD In
 #endif
 
 #if(11 <= MAX_EP_NUMBER)
-volatile far BDT ep11Bo;        //Endpoint #11 BD Out
-volatile far BDT ep11Bi;        //Endpoint #11 BD In
+volatile BOOT_FAR BDT ep11Bo BOOT_USB_AT(0x458);        //Endpoint #11 BD Out
+volatile BOOT_FAR BDT ep11Bi BOOT_USB_AT(0x45C);        //Endpoint #11 BD In
 #endif
 
 #if(12 <= MAX_EP_NUMBER)
-volatile far BDT ep12Bo;        //Endpoint #12 BD Out
-volatile far BDT ep12Bi;        //Endpoint #12 BD In
+volatile BOOT_FAR BDT ep12Bo BOOT_USB_AT(0x460);        //Endpoint #12 BD Out
+volatile BOOT_FAR BDT ep12Bi BOOT_USB_AT(0x464);        //Endpoint #12 BD In
 #endif
 
 #if(13 <= MAX_EP_NUMBER)
-volatile far BDT ep13Bo;        //Endpoint #13 BD Out
-volatile far BDT ep13Bi;        //Endpoint #13 BD In
+volatile BOOT_FAR BDT ep13Bo BOOT_USB_AT(0x468);        //Endpoint #13 BD Out
+volatile BOOT_FAR BDT ep13Bi BOOT_USB_AT(0x46C);        //Endpoint #13 BD In
 #endif
 
 #if(14 <= MAX_EP_NUMBER)
-volatile far BDT ep14Bo;        //Endpoint #14 BD Out
-volatile far BDT ep14Bi;        //Endpoint #14 BD In
+volatile BOOT_FAR BDT ep14Bo BOOT_USB_AT(0x470);        //Endpoint #14 BD Out
+volatile BOOT_FAR BDT ep14Bi BOOT_USB_AT(0x474);        //Endpoint #14 BD In
 #endif
 
 #if(15 <= MAX_EP_NUMBER)
-volatile far BDT ep15Bo;        //Endpoint #15 BD Out
-volatile far BDT ep15Bi;        //Endpoint #15 BD In
+volatile BOOT_FAR BDT ep15Bo BOOT_USB_AT(0x478);        //Endpoint #15 BD Out
+volatile BOOT_FAR BDT ep15Bi BOOT_USB_AT(0x47C);        //Endpoint #15 BD In
 #endif
 
 /******************************************************************************
@@ -265,16 +269,45 @@ volatile far BDT ep15Bi;        //Endpoint #15 BD In
  *
  * - Both data types are defined in system\usb\usbdefs\usbdefs_ep0_buff.h
  *****************************************************************************/
-volatile far CTRL_TRF_SETUP SetupPkt;
-volatile far CTRL_TRF_DATA CtrlTrfData;
+volatile BOOT_FAR CTRL_TRF_SETUP SetupPkt BOOT_USB_AT(0x410);
+volatile BOOT_FAR CTRL_TRF_DATA CtrlTrfData BOOT_USB_AT(0x418);
 
 /******************************************************************************
  * Section C: Buffer
  ******************************************************************************
  *
  *****************************************************************************/
-volatile far BOOT_DATA_PACKET dataPacket;
+volatile BOOT_FAR BOOT_DATA_PACKET dataPacket BOOT_USB_AT(0x420);
 
+#if !defined(__XC8)
 #pragma udata
+#endif
 
 /** EOF usbmmap.c ************************************************************/
+
+#if defined(__XC8)
+#if MAX_EP_NUMBER != 1 || EP0_BUFF_SIZE != 8 || MODE_PP != _PPBM0
+#error "Update the fixed USB layout before changing endpoints or ping-pong mode."
+#endif
+/* Compiled by the target compiler, not inferred from host type sizes. */
+#define USB_CHECK(name, expression) typedef char name[(expression) ? 1 : -1]
+USB_CHECK(usb_byte_size, sizeof(byte) == 1);
+USB_CHECK(usb_word_size, sizeof(word) == 2);
+USB_CHECK(usb_dword_size, sizeof(dword) == 4);
+USB_CHECK(usb_bd_stat_size, sizeof(BD_STAT) == 1);
+USB_CHECK(usb_bd_size, sizeof(BDT) == 4);
+USB_CHECK(usb_bd_address_offset, offsetof(BDT, ADR) == 2);
+USB_CHECK(usb_bd_address_size, sizeof(((BDT *)0)->ADR) == 2);
+USB_CHECK(usb_setup_size, sizeof(CTRL_TRF_SETUP) == 8);
+USB_CHECK(usb_control_size, sizeof(CTRL_TRF_DATA) == 8);
+USB_CHECK(usb_device_descriptor_size, sizeof(USB_DEV_DSC) == 18);
+USB_CHECK(usb_config_descriptor_size, sizeof(USB_CFG_DSC) == 9);
+USB_CHECK(usb_interface_descriptor_size, sizeof(USB_INTF_DSC) == 9);
+USB_CHECK(usb_endpoint_descriptor_size, sizeof(USB_EP_DSC) == 7);
+USB_CHECK(usb_configuration_size, sizeof(BOOT_CFG_DSC) == 32);
+USB_CHECK(usb_language_descriptor_size, sizeof(BOOT_LANG_DSC) == 4);
+USB_CHECK(usb_application_vector, RM_RESET_VECTOR == 0x08C0);
+USB_CHECK(usb_high_vector, RM_HIGH_INTERRUPT_VECTOR == 0x08C8);
+USB_CHECK(usb_low_vector, RM_LOW_INTERRUPT_VECTOR == 0x08D8);
+#undef USB_CHECK
+#endif
