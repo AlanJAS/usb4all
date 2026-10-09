@@ -22,7 +22,7 @@ void HackPointsRelease(byte handler);
 
 /* Table used by te framework to get a fixed reference point
  * to the user module functions defined by the framework
-/** USER MODULE REFERENCE*****************************************************/
+** USER MODULE REFERENCE*****************************************************/
 const uTab HackPointsModuleTable = {&HackPointsInit, &HackPointsRelease, "hackp"};
 
 /** D E C L A R A T I O N S **************************************************/
