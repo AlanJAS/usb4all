@@ -22,7 +22,7 @@
 
 #define TIME_UNIT        2000
 #define LONG_TIME_UNIT   5000
-#define TIME_C           1000
+#define TIME_C           1000u
 
 #define C_ID_MOTORS   (byte) 253
 #define C_TRIES       (byte) 2

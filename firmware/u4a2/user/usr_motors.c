@@ -6,8 +6,46 @@
  *****************************************************************************/
 
 /** I N C L U D E S **********************************************************/
-#include <xc.h>
 #include "system/typedefs.h"
+
+#define MOTOR_MAX_SPEED 1023u
+
+/* Speeds are transmitted most-significant byte first. */
+static inline word motor_read_speed(byte high, byte low)
+{
+    return (word)(((word)high << 8) | (word)low);
+}
+
+/* Caller guarantees speed <= MOTOR_MAX_SPEED. The 32-bit intermediate
+ * prevents overflow on PIC's 16-bit int; division truncates to whole ticks. */
+static inline word motor_speed_ticks(word speed, word period)
+{
+    return (word)(((dword)speed * period) / MOTOR_MAX_SPEED);
+}
+
+/* Single: command, motor (0=left, 1=right), direction, speed high, speed low.
+ * Do not read any field before checking length. No new wire-level error code
+ * is introduced: callers silently ignore invalid commands (no success echo). */
+static inline BOOL motor_single_request_valid(const byte *packet, byte length)
+{
+    if (length < 5u) return FALSE;
+    return packet[1] <= 1u && packet[2] <= 1u &&
+           motor_read_speed(packet[3], packet[4]) <= MOTOR_MAX_SPEED;
+}
+
+/* Dual: command, left direction/high/low, right direction/high/low.
+ * Validate the entire request before the caller commits any motor state. */
+static inline BOOL motor_dual_request_valid(const byte *packet, byte length)
+{
+    if (length < 7u) return FALSE;
+    return packet[1] <= 1u && packet[4] <= 1u &&
+           motor_read_speed(packet[2], packet[3]) <= MOTOR_MAX_SPEED &&
+           motor_read_speed(packet[5], packet[6]) <= MOTOR_MAX_SPEED;
+}
+
+/* Host tests compile the pure helpers above without PIC peripherals. */
+#ifndef U4A_MOTOR_VALUES_TEST
+#include <xc.h>
 #include "system/usb/usb.h"
 #include "user/usr_motors.h"
 #include "io_cfg.h"              // I/O pin mapping
@@ -50,8 +88,8 @@ word speedLeft;
 word speedRight;
 byte directionLeft;
 byte directionRight;
-int timeLeft;
-int timeRight;
+word timeLeft;
+word timeRight;
 BOOL onRight;
 word prevSpeedLeft  = 0;
 word prevSpeedRight = 0;
@@ -128,11 +166,13 @@ void moveLeftCC(unsigned int vel, byte sen){
 }
 
 void moveRightAX(unsigned int vel, byte sen){
-    endlessTurn(wheels.right.id, vel, sen);
+    if (vel > MOTOR_MAX_SPEED) return;
+    endlessTurn(wheels.right.id, (int)vel, sen);
 }
 
 void moveLeftAX(unsigned int vel, byte sen){
-    endlessTurn(wheels.left.id, vel, sen);
+    if (vel > MOTOR_MAX_SPEED) return;
+    endlessTurn(wheels.left.id, (int)vel, sen);
 }
 
 void stopRight() {
@@ -183,22 +223,22 @@ void speedControl(){
         changeVel = FALSE;
         unregisterFuncMotors();
         onRight = FALSE;
-        if (speedRight == 0u || speedRight == 1023u){
+        if (speedRight == 0u || speedRight == MOTOR_MAX_SPEED){
             moveRightMOTOR(speedRight,directionRight);
         }
         else if(speedRight != MOTOR_SPEED_UNCHANGED){
-            timeRight = speedRight * (TIME_C/(double)1023);
+            timeRight = motor_speed_ticks(speedRight, TIME_C);
             onRight = TRUE;
         }
 
-        if (speedLeft == 0u || speedLeft == 1023){
+        if (speedLeft == 0u || speedLeft == MOTOR_MAX_SPEED){
             moveLeftMOTOR(speedLeft,directionLeft);
         }
         else if (speedLeft != MOTOR_SPEED_UNCHANGED){
-            timeLeft = speedLeft * (TIME_C/(double)1023);
+            timeLeft = motor_speed_ticks(speedLeft, TIME_C);
             registerT0eventInEvent(0, &turnOnLeft);
         }
-        if((onRight == TRUE) && (speedLeft == 1023u || speedLeft ==0u)){
+        if((onRight == TRUE) && (speedLeft == MOTOR_MAX_SPEED || speedLeft ==0u)){
             registerT0eventInEvent(0, &turnOnRight);
         }
     }
@@ -385,6 +425,7 @@ void UserMotorsRelease(byte handler) {
 void UserMotorsReceived(byte* recBuffPtr, byte len, byte handler) {
     byte userMotorsCounter = 0;
     byte lowVel1, lowVel2, highVel1, highVel2, idmotor, highV,lowV;
+    if (len == 0) return;
     switch (((MOTORS_DATA_PACKET*) recBuffPtr)->CMD) {
 
         case U4A_USR_MOTORS_READ_VERSION:
@@ -401,13 +442,14 @@ void UserMotorsReceived(byte* recBuffPtr, byte len, byte handler) {
             break;
 
         case U4A_USR_MOTORS_SET_VEL_MTR:
+            /* Invalid requests do not change state or receive a success echo. */
+            if (!motor_single_request_valid(recBuffPtr, len)) return;
             ((MOTORS_DATA_PACKET*) sendBufferUsrMotors)->_byte[0] = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[0];
             idmotor = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[1];
             directionRight = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[2];
             highVel1 = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[3];
             lowVel1 = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[4];
-            speedRight = highVel1;
-            speedRight = speedRight << 8 | lowVel1;
+            speedRight = motor_read_speed(highVel1, lowVel1);
             directionLeft = 1 - directionRight;
             if(MOTORS_T == MOTORS_SHIELD_CC){
                 changeVel = TRUE;
@@ -429,18 +471,18 @@ void UserMotorsReceived(byte* recBuffPtr, byte len, byte handler) {
             break;
 
         case U4A_USR_MOTORS_SET_VEL_2MTR:
+            /* Validate both motors before updating either one. */
+            if (!motor_dual_request_valid(recBuffPtr, len)) return;
             ((MOTORS_DATA_PACKET*) sendBufferUsrMotors)->_byte[0] = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[0];
             directionRight = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[4];
             highVel1 = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[5];
             lowVel1 = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[6];
-            speedRight = highVel1;
-            speedRight = speedRight << 8 | lowVel1;
+            speedRight = motor_read_speed(highVel1, lowVel1);
 
             directionLeft = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[1];
             highVel2 = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[2];
             lowVel2 = ((MOTORS_DATA_PACKET*) recBuffPtr)->_byte[3];
-            speedLeft = highVel2;
-            speedLeft = speedLeft << 8 | lowVel2;
+            speedLeft = motor_read_speed(highVel2, lowVel2);
             directionLeft = 1 - directionLeft;
 
             if(MOTORS_T == MOTORS_SHIELD_CC){
@@ -477,3 +519,5 @@ void UserMotorsReceived(byte* recBuffPtr, byte len, byte handler) {
 }/*end UserMotorsReceived*/
 
 /** EOF usr_motors.c ***************************************************************/
+
+#endif /* U4A_MOTOR_VALUES_TEST */

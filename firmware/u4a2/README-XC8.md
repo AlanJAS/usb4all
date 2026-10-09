@@ -118,3 +118,24 @@ conservar layouts de paquetes, añadir su `.c` a `SOURCES`, su descriptor al fin
 - [Microchip: opción DFP](https://onlinedocs.microchip.com/oxy/GUID-BB433107-FD4E-4D28-BB58-9D4A58955B1A-en-US-9/GUID-508506FB-BEFB-4101-BA76-26A921891125.html)
 - [Compilador XC8](https://www.microchip.com/en-us/tools-resources/develop/mplab-xc-compilers/xc8)
 - [Device Family Packs](https://packs.download.microchip.com/)
+
+## Actualización: velocidades y tiempos PWM (XC8 4.00)
+
+Tras el parche de conversiones explícitas, el segundo parche valida los comandos
+`SET_VEL_MTR` y `SET_VEL_2MTR` antes de modificar el estado. Las velocidades deben
+estar entre 0 y 1023, las direcciones entre 0 y 1, y el identificador del comando
+individual debe ser 0 (izquierdo) o 1 (derecho). Se requieren al menos 5 bytes para
+el comando individual y 7 para el doble, incluyendo el byte de comando.
+El comando doble se valida completo antes de actualizar cualquiera de los motores.
+
+Una solicitud inválida o incompleta se ignora: no cambia el estado y no se envía
+el eco de éxito. El cliente puede observar un timeout. No se introduce un código
+NACK nuevo. El valor 0xFFFF sigue siendo un indicador interno; no es una velocidad
+admitida por USB. El formato, la respuesta y las inversiones de dirección de los
+comandos válidos permanecen iguales.
+
+Los tiempos PWM son `word` y se calculan como `speed * TIME_C / 1023`, con
+multiplicación de 32 bits y truncamiento a ticks enteros. Para velocidades válidas,
+el resultado pertenece a 0..TIME_C. Las llamadas AX12 comprueban el rango antes
+de convertir la velocidad a `int`; no se cambia la API general de `endlessTurn`.
+
