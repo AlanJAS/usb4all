@@ -7,7 +7,7 @@
 #define USB4BUTIA_H
 
 #include <xc.h>
-#include "typedefs.h"
+#include "system/typedefs.h"
 
 #define MAX_PORTS   (byte) 6
 #define DISCONECTED (byte) 0

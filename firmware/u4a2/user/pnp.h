@@ -2,7 +2,7 @@
 #ifndef PNP__H
 #define PNP__H
 
-#include "typedefs.h"
+#include "system/typedefs.h"
 #include "user/usb4butia.h"
 #include "system/typedefs.h"
 #include "user/adminModule.h"
