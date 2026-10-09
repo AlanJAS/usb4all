@@ -16,6 +16,12 @@ firmware/u4a2/USB4all.X/build
 firmware/u4a2/USB4all.X/dist
 firmware/u4a2/USB4all.X/*.i
 
+# bootloader
+firmware/bootloader/build
+firmware/bootloader/MCHPUSB.X/build
+firmware/bootloader/MCHPUSB.X/dist
+
+
 #Makefiles autogenerados
 firmware/u4a2/USB4all.X/nbproject/Makefile-default.mk
 firmware/u4a2/USB4all.X/nbproject/Makefile-genesis.properties
